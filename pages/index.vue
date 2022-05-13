@@ -1,9 +1,13 @@
 <template>
-  <Tutorial/>
+  <Jobs />
 </template>
 
 <script>
+import sidebar from "~/layouts/sidebar";
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  components: {
+    sidebar,
+    }
 }
 </script>
