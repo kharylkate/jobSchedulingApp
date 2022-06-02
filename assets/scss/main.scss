@@ -1,11 +1,15 @@
+// functions (so we can manipulate colors, SVGs, calc, etc)
+// from documentation https://getbootstrap.com/docs/5.2/customize/sass/
+@import "../../node_modules/bootstrap/scss/functions";
+
 // utils
 @import "utils/variables";
 
- // vendors
- @import "vendors/bootstrap";
-
 // base
 @import "base/body";
+
+ // vendors
+//  @import "vendors/bootstrap";
 
 // components
 @import "components/alert";

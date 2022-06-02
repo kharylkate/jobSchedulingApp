@@ -10,8 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "axios": "^0.27.2",
     "bootstrap": "^4.6.1",
     "bootstrap-vue": "^2.21.2",
+    "codemirror": "^5.65.4",
     "core-js": "^3.19.3",
     "cron-parser": "^4.4.0",
     "cronstrue": "^2.4.0",

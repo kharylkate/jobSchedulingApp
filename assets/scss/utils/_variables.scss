@@ -4,8 +4,63 @@ $theme-colors: (
     "btn-warning": #E1CA92,
     "btn-error": #EB949D,
     "font-primary": #1c4842, // light bg
-    "font-secondary": #78A87F, // dark-bg
+    "secondary": #78A87F, // dark-bg
+    "secondarybg": #78A87F,
     "font-warning": #CCA138,
     "font-error": #BA4A4E,
-    
 );
+
+.job-name {
+    border: 1px solid #78A87F !important;
+}
+
+.log-script {
+    border: 1px solid #78A87F !important;
+}
+
+.borde {
+    border: 1px solid green !important;
+}
+
+.custom-modal {
+    height: 300px;
+    width: 300px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.custom-modal-title {
+    color: #1c4842;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.custom-modal-header {
+    margin-top: 20px;
+    padding: 18px;
+}
+
+.cmbtn {
+    // border: 1px solid #1c4842 !important;
+    padding-left: 1px;
+    padding-right: 1px;
+    padding-top: 0px;
+    border-radius: 15px;
+    .custom-modal-exit-btn {
+        margin: 0px;
+        padding: 0px;
+    }
+}
+
+.cmbtn:hover  {
+    background-color: #CED3D0;
+}
+
+// .custom-modal-exit-btn {
+//     margin: 0;
+//     padding: 0;
+// }
+
+@import "~bootstrap/scss/bootstrap.scss";
+@import "~bootstrap-vue/src/index.scss";
