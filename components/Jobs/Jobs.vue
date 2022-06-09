@@ -1,86 +1,80 @@
 <!-- Please remove this file from your project -->
 <template>
   <div>
-    <b-overlay :show="show">
-      <b-card border-variant="light" bg-variant="default" text-variant="black" title="Jobs">
-        <b-card-text class="jobs-description-container">
-          <div>
+    <div class="main-content">
+      <b-overlay :show="show">
+        <b-card border-variant="light" bg-variant="default" text-variant="black" title="Jobs">
+          <b-card-text class="jobs-description-container">
+            <div>
+              
+            </div>
             
-          </div>
-          
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, voluptates? Quo illo facilis libero voluptatum iste molestias ipsam quisquam, alias cumque id nemo cupiditate possimus recusandae explicabo expedita ullam aliquam. <unicon class="icon-create-script" name="direction" fill="fontprimary"></unicon>
-        </b-card-text>
-        <b-button href="#" variant="primary" @click="showCreateJobModal()">Create Job</b-button>
-      </b-card>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, voluptates? Quo illo facilis libero voluptatum iste molestias ipsam quisquam, alias cumque id nemo cupiditate possimus recusandae explicabo expedita ullam aliquam. <unicon class="icon-create-script" name="direction" fill="fontprimary"></unicon>
+          </b-card-text>
+          <b-button href="#" variant="primary" @click="showCreateJobModal()">Create Job</b-button>
+        </b-card>
 
-      <div class="container mt-3">
-        <b-table responsive outlined sticky-header="100px;"
-          :items="listJobs"
-          :fields="fields"
-        >
-          <template v-slot:cell(description)="data">
-            <!-- <nuxt-link :to="'JobNewTab/'+data.item.id" target="_blank"> -->
-            <nuxt-link :to='/jobs/+ data.item.id' :jobItem="[ data.item ]" target="_blank">
-              {{ data.item.description }}
-            </nuxt-link>
-            <!-- </nuxt-link> -->
-          </template>
-          <template v-slot:cell(actions)="data">
-            <b-button id="btn-create-script" variant="btn-primary" size="sm" v-if="(data.item.script !== null || data.item.script !== '')">
-              <unicon class="icon-create-script" name="direction" fill="font-primary"></unicon>
-            </b-button>
-          </template>
-        </b-table>
-      </div>
-
-
-      <div class="container p5 m-3">
-        <div class="custom-modal">
-          <b-row class="custom-modal-header">
-            <b-col cols="auto" class="mr-auto custom-modal-title pl-4">
-              Name
-            </b-col>
-            <!-- <b-col cols="auto" class="custom-modal-exit pr-4">
-              <div class="cmbtn">
-                <unicon class="icon-custom-modal-exit" name="multiply" fill="font-primary" height="13" width="13"></unicon>
-              </div>
-            </b-col> -->
-          </b-row>
+        <div class="container mt-3">
+          <b-table responsive outlined sticky-header="100px;"
+            :items="listJobs"
+            :fields="fields"
+          >
+            <template v-slot:cell(name)="data">
+              <nuxt-link :to='/jobs/+ data.item.id' :jobItem="[ data.item ]" target="_blank">
+                {{ data.item.name }}
+              </nuxt-link>
+            </template>
+            <template v-slot:cell(actions)="data">
+              <b-button id="btn-create-script" variant="btn-primary" size="sm" v-if="(data.item.script !== null || data.item.script !== '')">
+                <unicon class="icon-create-script" name="direction" fill="font-primary"></unicon>
+              </b-button>
+            </template>
+          </b-table>
         </div>
-      </div>
 
-      <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
-        <form ref="createJobForm" @submit.stop.prevent="handleSubmit">
-          <b-form-group label="Name" label-size="sm" label-for="name-input" :state="state.name" invalid-feedback="Name is required">
-            <b-form-input id="name-input" size="sm" v-model="job.name" required />
-          </b-form-group>
 
-          <b-form-group label="Description" label-size="sm" label-for="desc-input" :state="state.description" invalid-feedback="Description is required">
-            <b-form-input id="desc-input" size="sm" v-model="job.description" required />
-          </b-form-group>
-
-          <b-form-group label="Schedule" label-size="sm" label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
-            <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
-          </b-form-group>
-
-          <b-form-group label="Status" label-size="sm" label-for="status-input" :state="state.status" invalid-feedback="Status is required">
-            <b-form-radio-group id="status-input" class="pt-2"
-              :options="['Enabled', 'Disabled']" v-model="job.status" required/>
-          </b-form-group>
-        </form>
-      </b-modal>
-
-      <!-- alert -->
-      <div>
-        <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
-          <div class="alertborder" style="borderWidth:40px solid; borderColor:'brown'">
-            <unicon :name="alert.color == 'green' ? 'check' : 'multiply' " :fill="alert.color"> </unicon>
-              {{ alert.message }}
+        <!-- <div class="container p5 m-3">
+          <div class="custom-modal">
+            <b-row class="custom-modal-header">
+              <b-col cols="auto" class="mr-auto custom-modal-title pl-4">
+                Name
+              </b-col>
+            </b-row>
           </div>
-        </b-alert>
-      </div>
-    </b-overlay>
+        </div> -->
 
+        <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
+          <form ref="createJobForm" @submit.stop.prevent="handleSubmit">
+            <b-form-group label="Name" label-size="sm" label-for="name-input" :state="state.name" invalid-feedback="Name is required">
+              <b-form-input id="name-input" size="sm" v-model="job.name" required />
+            </b-form-group>
+
+            <b-form-group label="Description" label-size="sm" label-for="desc-input" :state="state.description" invalid-feedback="Description is required">
+              <b-form-input id="desc-input" size="sm" v-model="job.description" required />
+            </b-form-group>
+
+            <b-form-group label="Schedule" label-size="sm" label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
+              <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
+            </b-form-group>
+
+            <b-form-group label="Status" label-size="sm" label-for="status-input" :state="state.status" invalid-feedback="Status is required">
+              <b-form-radio-group id="status-input" class="pt-2"
+                :options="['Enabled', 'Disabled']" v-model="job.status" required/>
+            </b-form-group>
+          </form>
+        </b-modal>
+
+        <!-- alert -->
+        <div>
+          <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
+            <div class="alertborder" style="borderWidth:40px solid; borderColor:'brown'">
+              <unicon :name="alert.color == 'green' ? 'check' : 'multiply' " :fill="alert.color"> </unicon>
+                {{ alert.message }}
+            </div>
+          </b-alert>
+        </div>
+      </b-overlay>
+    </div>
   </div>
 </template>
 
@@ -99,21 +93,21 @@ export default {
           key: "name",
           label: "Name"
         },{
-          key: "description",
-          label: "Description"
+          key: "command",
+          label: "Command"
+        },{
+            key: "schedule",
+          label: "Schedule",
+          formatter: value => {
+            if(value == null) return "";
+            return cronstrue.toString(value);
+          }
         },{
           key: "status",
           label: "Status",
           formatter: value => {
             if(value == null) return "";
             return value ? "Enabled" : "Disabled";
-          }
-        },{
-          key: "schedule",
-          label: "Schedule",
-          formatter: value => {
-            if(value == null) return "";
-            return cronstrue.toString(value);
           }
         },{
           key: "actions",

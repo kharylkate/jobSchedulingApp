@@ -1,8 +1,18 @@
 <template>
-    <div>
-    <b-button v-b-toggle.sidebar-no-header>Toggle Sidebar</b-button>
-    <b-sidebar id="sidebar-no-header" aria-labelledby="sidebar-no-header-title" no-header shadow>
-      <template #default="{ hide }">
+    <div class="sidebar" id="sidebar">
+    <!-- <b-button v-b-toggle.sidebar-no-header>Toggle Sidebar</b-button> -->
+    <!-- <b-sidebar id="sidebar-no-header" aria-labelledby="sidebar-no-header-title" no-header shadow> -->
+      <!-- <template> -->
+        <div class="sidebar-header p-2">
+          <b-row>
+            <div class="sidebar-header-logo">
+              <img class="sidebar-logo-bfi" src="/bfi-org.png" alt="bfi-org-logo-leaf">
+            </div>
+            <div class="sidebar-header-appname">
+              <h4>Job Scheduling</h4>
+            </div>
+          </b-row>
+        </div>
         <div class="p-3">
           <h4 id="sidebar-no-header-title">Custom header sidebar</h4>
           <p>
@@ -18,8 +28,8 @@
           </nav>
           <b-button variant="primary" block @click="hide">Close Sidebar</b-button>
         </div>
-      </template>
-    </b-sidebar>
+      <!-- </template> -->
+    <!-- </b-sidebar> -->
   </div>
 </template>
 
