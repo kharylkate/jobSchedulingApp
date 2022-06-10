@@ -1,0 +1,59 @@
+.modal-content {
+    background-color: #2F343F;
+    color: white;
+    border: 0;
+    border-radius: 3px;
+    font-size: 14px;
+
+    .close {
+        color: white;
+    }
+}
+
+.modal-header, .modal-footer {
+    border: none;
+}
+
+.form-control {
+    background-color: #121722;
+    color: white;
+    border: 0;
+}
+
+.form-control:focus {
+    background-color: #121722;
+    color: white;
+    border: none;
+    box-shadow: none;
+}
+
+.name-input {
+    display: inline-block;
+}
+
+.form-floating {
+    height: add(3.5rem, $input-height-border);
+    line-height: 1.25;
+    padding-right: $input-padding-x;
+    padding-left: $input-padding-x;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: opacity .1s ease-in-out, transform .1s ease-in-out;
+
+    .form-group {
+        // label-opacity: .65;
+        text-transform: scale(.85) translateY(-.5rem) translateX(.15rem);
+    }
+
+    .form-input {
+        padding-top: 1.625rem;
+        padding-bottom: .625rem;
+    }
+}
+
+
+
+
+
+
+

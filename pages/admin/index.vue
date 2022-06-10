@@ -5,8 +5,8 @@
           <b-col cols="12" lg="2" md="2" sm="0" class="sidebar m-0 p-0">
             <Sidebar />
           </b-col>
-          <b-col class="content m-0 p-0">
-            <Jobs />
+          <b-col class="content">
+            <Admin />
           </b-col>
         </b-row>
       </b-container>
@@ -14,11 +14,10 @@
 </template>
 
 <script>
-// import Jobs from '../components/Jobs/Jobs.vue';
-import Sidebar from '../layouts/sidebar.vue';
+import Sidebar from '../../layouts/sidebar.vue'
 export default {
-    name: "IndexPage",
-    // layout: "sidebar",
-    components: { Sidebar }
+  name: 'IndexPage',
+  // layout: 'sidebar',
+  components: { Sidebar }
 }
 </script>

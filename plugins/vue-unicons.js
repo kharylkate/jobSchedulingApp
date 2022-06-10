@@ -10,7 +10,8 @@ import { uniLayerGroupMonochrome,
     uniPen,
     uniTrash,
     uniDirection,
-    uniArrow
+    uniArrow,
+    uniLockAccess,
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -24,6 +25,10 @@ Unicon.add([
     uniPen,
     uniTrash,
     uniDirection,
-    uniArrow
+    uniArrow,
+    uniLockAccess
 ]);
-Vue.use(Unicon);
+Vue.use(Unicon, {
+    height: 20,
+    width: 20
+});

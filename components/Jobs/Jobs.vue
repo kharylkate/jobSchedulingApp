@@ -1,36 +1,62 @@
-<!-- Please remove this file from your project -->
 <template>
   <div>
-    <div class="main-content">
+    <div class="main-content p-0 m-0">
       <b-overlay :show="show">
-        <b-card border-variant="light" bg-variant="default" text-variant="black" title="Jobs">
-          <b-card-text class="jobs-description-container">
-            <div>
-              
-            </div>
-            
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Non, voluptates? Quo illo facilis libero voluptatum iste molestias ipsam quisquam, alias cumque id nemo cupiditate possimus recusandae explicabo expedita ullam aliquam. <unicon class="icon-create-script" name="direction" fill="fontprimary"></unicon>
-          </b-card-text>
-          <b-button href="#" variant="primary" @click="showCreateJobModal()">Create Job</b-button>
-        </b-card>
+        <div class="header">
+          <b-navbar toggleable="lg" type="dark">
+            <b-nav-form>
+              <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
+              <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+            </b-nav-form>
 
-        <div class="container mt-3">
-          <b-table responsive outlined sticky-header="100px;"
-            :items="listJobs"
-            :fields="fields"
-          >
-            <template v-slot:cell(name)="data">
-              <nuxt-link :to='/jobs/+ data.item.id' :jobItem="[ data.item ]" target="_blank">
-                {{ data.item.name }}
-              </nuxt-link>
-            </template>
-            <template v-slot:cell(actions)="data">
-              <b-button id="btn-create-script" variant="btn-primary" size="sm" v-if="(data.item.script !== null || data.item.script !== '')">
-                <unicon class="icon-create-script" name="direction" fill="font-primary"></unicon>
-              </b-button>
-            </template>
-          </b-table>
+            <b-dropdown class="ml-auto" right>
+              <b-dropdown-item href="#">Profile</b-dropdown-item>
+              <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+              </b-dropdown>
+            </b-navbar>
+
+            <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
+              <h3> Jobs </h3>
+            </div>
         </div>
+
+          <div class="jobs-table">
+            <div class="jobs-table-top">
+              <b-row>
+                <div class="jobs-table-command pt-1 mr-auto ml-0">
+                  $root crontab -l
+                </div>
+                <div class="jobs-table-create ml-auto mr-0">
+                  <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateJobModal()">
+                    <unicon class="unicon" name="plus" fill="white" /> <b>CREATE&nbsp;</b>
+                  </b-button>
+                </div>
+              </b-row>
+            </div>
+            <b-table small hover responsive sticky-header selectable 
+              class="table-borderless border-0" 
+              select-mode="single"
+              :items="listJobs"
+              :fields="fields"
+              @row-selected="onRowSelect"
+            >
+              <!-- <template v-slot:cell(name)="data">
+                <nuxt-link :to='/jobs/+ data.item.id' :jobItem="[ data.item ]" target="_blank">
+                  {{ data.item.name }}
+                </nuxt-link>
+              </template> -->
+              <template v-slot:cell(status)="data">
+                <b-badge v-if="(data.item.status)" variant="secondary">ENABLED</b-badge>
+                <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
+              </template>
+              <template v-slot:cell(actions)="data">
+                <b-button class="btn-update-script px-1 py-1" size="sm" v-if="(data.item.script !== null || data.item.script !== '')">
+                    &nbsp; <unicon class="icon-update-script" name="pen" fill="white"></unicon>
+                    Update&nbsp;&nbsp;
+                </b-button>
+              </template>
+            </b-table>
+          </div>
 
 
         <!-- <div class="container p5 m-3">
@@ -44,24 +70,50 @@
         </div> -->
 
         <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
-          <form ref="createJobForm" @submit.stop.prevent="handleSubmit">
-            <b-form-group label="Name" label-size="sm" label-for="name-input" :state="state.name" invalid-feedback="Name is required">
+          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
+            :state="state.name" label-for="name-input" invalid-feedback="Name is required">
               <b-form-input id="name-input" size="sm" v-model="job.name" required />
             </b-form-group>
 
-            <b-form-group label="Description" label-size="sm" label-for="desc-input" :state="state.description" invalid-feedback="Description is required">
-              <b-form-input id="desc-input" size="sm" v-model="job.description" required />
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
+              :state="state.command" label-for="command-input" invalid-feedback="Command is required">
+              <b-form-input id="command-input" size="sm" v-model="job.command" required />
             </b-form-group>
 
-            <b-form-group label="Schedule" label-size="sm" label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
+              label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
               <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
             </b-form-group>
 
-            <b-form-group label="Status" label-size="sm" label-for="status-input" :state="state.status" invalid-feedback="Status is required">
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
+              label-for="status-input" :state="state.status" invalid-feedback="Status is required">
               <b-form-radio-group id="status-input" class="pt-2"
-                :options="['Enabled', 'Disabled']" v-model="job.status" required/>
+                :options="[{ text: 'Enabled', value: true}, { text: 'Disabled', value: false }]" v-model="job.status" required/>
             </b-form-group>
           </form>
+          <template #modal-footer>
+            <div class="w-100">
+              <!-- <p class="float-left">Modal Footer Content</p> -->
+              <div class="float-right">
+                <b-button
+                  variant="disabledbg"
+                  size="sm"
+                  @click="resetCreateJobModal"
+                >
+                  Cancel
+                </b-button>
+                <b-button
+                  variant="btn-primary"
+                  size="sm"
+                  @click="createJob()"
+                >
+                  Create
+                </b-button>
+              </div>
+            </div>
+          </template>
         </b-modal>
 
         <!-- alert -->
@@ -84,6 +136,8 @@ import cronstrue from "cronstrue";
 
 export default {
   name: 'NuxtTutorial',
+  components: {
+  },
   data() {
     return {
       show: false,
@@ -91,32 +145,42 @@ export default {
       fields: [
         {
           key: "name",
-          label: "Name"
+          label: "Name",
+          thClass: "thead-colorless",
+          tdClass: "align-middle"
         },{
           key: "command",
-          label: "Command"
+          label: "Command",
+          thClass: "thead-colorless",
+          tdClass: "align-middle"
         },{
             key: "schedule",
-          label: "Schedule",
-          formatter: value => {
-            if(value == null) return "";
-            return cronstrue.toString(value);
-          }
+            label: "Schedule",
+            formatter: value => {
+              if(value == null) return "";
+              return cronstrue.toString(value);
+            },
+            thClass: "thead-colorless",
+            tdClass: "align-middle"
         },{
           key: "status",
           label: "Status",
-          formatter: value => {
-            if(value == null) return "";
-            return value ? "Enabled" : "Disabled";
-          }
+          // formatter: value => {
+          //   if(value == null) return "";
+          //   return value ? "Enabled" : "Disabled";
+          // },
+          thClass: "thead-colorless",
+          tdClass: "align-middle"
         },{
           key: "actions",
           label: "Action",
+          thClass: "thead-colorless",
+          tdClass: "align-middle"
         },
       ],
       job: {
         name: null,
-        description: null,
+        command: null,
         status: null,
         schedule: null,
       },
@@ -127,7 +191,7 @@ export default {
       },
       state: {
         name: null,
-        description: null,
+        command: null,
         status: null,
         schedule: null,
       }
@@ -147,20 +211,25 @@ export default {
 
   },
   methods: {
+    onRowSelect(data) {
+      console.log("selected", data);
+    },
     showCreateJobModal() {
       // this.showAlert("Successfully Created", "green");
+      // this.show.$bvModal
+      // console.log(this);
       this.$bvModal.show("create-new-job");
     },
     resetCreateJobModal() {
       this.job = {
         name: null,
-        description: null,
+        command: null,
         status: null,
         schedule: null,
       }
     },
-    createJob(bvModalEvent) {
-      bvModalEvent.preventDefault();
+    createJob() {
+      console.log(this.job);
       if(!this.validation()) {
         return;
       }
@@ -170,13 +239,13 @@ export default {
         if(res.status == 201) {
           this.job = {
             name: null,
-            description: null,
+            command: null,
             status: null,
             schedule: null,
           }
           this.state = {
             name: null,
-            description: null,
+            command: null,
             status: null,
             schedule: null,
           }
@@ -195,12 +264,12 @@ export default {
         document.getElementById("name-input").style.borderColor = "";
         this.state.name = true;
       }
-      if(this.job.description == null || this.job.description.length < 1) {
-        document.getElementById("desc-input").style.borderColor = "red";
-        this.state.description = false;
+      if(this.job.command == null || this.job.command.length < 1) {
+        document.getElementById("command-input").style.borderColor = "red";
+        this.state.command = false;
       } else {
-        document.getElementById("desc-input").style.borderColor = "";
-        this.state.description = true;
+        document.getElementById("command-input").style.borderColor = "";
+        this.state.command = true;
       }
       if(this.job.schedule == null || this.job.schedule.length < 1) {
         document.getElementById("sched-input").style.borderColor = "red";
@@ -217,7 +286,7 @@ export default {
         this.state.status = true;
       }
 
-      if(this.job.name != null && this.job.description != null && this.job.schedule != null && this.job.status != null) {
+      if(this.job.name != null && this.job.command != null && this.job.schedule != null && this.job.status != null) {
         return true;
       }
       
@@ -233,7 +302,7 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Jobs/fetchListJobs");
+    // await this.$store.dispatch("Jobs/fetchListJobs").then(res => console.log(res));
   },
   
 }

@@ -1,0 +1,32 @@
+.sidebar-logo-bfi {
+    width: 50px;
+    height: 50px;
+}
+
+.sidebar {
+    background-color: #353945;
+    max-width: 280px;
+    min-width: 280px;
+    height: 969px;
+    margin: 0px;
+    padding: 0px;
+}
+
+.sidebar-link {
+    display: block;
+}
+
+.sidebar-link:hover {
+    background-color: #146051;
+}
+
+.sidebar-link-item {
+    padding: 5px 5px 5px 20px;
+}
+
+
+@media screen and (max-width: 820px) {
+    .sidebar {
+        display: none;
+    }
+}

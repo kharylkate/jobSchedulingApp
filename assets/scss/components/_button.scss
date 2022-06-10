@@ -1,4 +1,21 @@
-// .icon-create-script {
-//     -ms-transform: rotate(90deg); /* IE 9 */
-//     transform: rotate(90deg) !important;
-// }
+.btn-update-script {
+    background-color: #353945;
+    border: 0;
+}
+
+.btn-create-job {
+    background-color: #146051;
+    border: 0;
+}
+
+.btn-create-job:hover {
+    background-color: #1c4842;
+}
+
+.btn-create-job:active {
+    background-color: #1c4842;
+}
+
+.btn-header {
+    border-radius: 50%;
+}

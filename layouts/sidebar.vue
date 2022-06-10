@@ -1,44 +1,54 @@
 <template>
     <div class="sidebar" id="sidebar">
-    <!-- <b-button v-b-toggle.sidebar-no-header>Toggle Sidebar</b-button> -->
-    <!-- <b-sidebar id="sidebar-no-header" aria-labelledby="sidebar-no-header-title" no-header shadow> -->
-      <!-- <template> -->
-        <div class="sidebar-header p-2">
+        <div class="sidebar-header p-2 pt-2 m-2">
           <b-row>
             <div class="sidebar-header-logo">
               <img class="sidebar-logo-bfi" src="/bfi-org.png" alt="bfi-org-logo-leaf">
             </div>
-            <div class="sidebar-header-appname">
-              <h4>Job Scheduling</h4>
+            <div class="sidebar-header-appname pt-1">
+              <h4>
+                <p class="header-title">Job</p>
+                <p class="header-title">Scheduling</p>
+              </h4>
             </div>
           </b-row>
         </div>
-        <div class="p-3">
-          <h4 id="sidebar-no-header-title">Custom header sidebar</h4>
-          <p>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-            in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-          </p>
+        <div>
           <nav class="mb-3">
-            <b-nav vertical>
-              <b-nav-item active @click="hide">Active</b-nav-item>
-              <b-nav-item href="#link-1" @click="hide">Link</b-nav-item>
-              <b-nav-item href="#link-2" @click="hide">Another Link</b-nav-item>
+            <b-nav vertical v-for="(mod, index) in modules" :key="index" class="sidebar-link">
+              <b-nav-item class="sidebar-link-item" :href="mod.path">
+                <b-row>
+                  <div class="nav-icon"> <unicon :name="mod.icon" fill="white" /> </div>
+                  <div class="nav-name"> &nbsp; {{ mod.name }} </div>
+                </b-row>
+              </b-nav-item>
             </b-nav>
           </nav>
-          <b-button variant="primary" block @click="hide">Close Sidebar</b-button>
         </div>
-      <!-- </template> -->
-    <!-- </b-sidebar> -->
   </div>
 </template>
 
 <script>
 export default {
-    methods: {
-        hide() {
-            console.log("HIDE ME");
+  data() {
+    return {
+      modules: [
+        {
+          name: "Jobs",
+          icon: "arrow",
+          path: "/"
+        }, {
+          name: "Admin",
+          icon: "lock-access",
+          path: "/admin"
         }
+      ]
     }
+  },
+  methods: {
+    hide() {
+      console.log("HIDE ME");
+    }
+  }
 }
 </script>
