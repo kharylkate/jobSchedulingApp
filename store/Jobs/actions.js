@@ -7,18 +7,7 @@ export default {
     },
 
     async fetchJobById({ commit }, data) {
-        const id = parseInt(data.id);
-        return await axios({
-            method: "GET",
-            url: `${this.$axios.defaults.baseURL}/jobs/${id}`
-        }).then(async res => {
-            if(res && res.data && Array.isArray(res.data)) {
-                await commit("setJobById", res.data[0]);
-            } else {
-                await commit("setJobById", {});
-            }
-            return res.data[0];
-        }).catch(err => err);
+        await commit("setJobById", data.id);
     },
 
     createJob({ commit }, data) {

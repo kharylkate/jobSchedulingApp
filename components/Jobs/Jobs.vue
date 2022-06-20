@@ -58,17 +58,6 @@
             </b-table>
           </div>
 
-
-        <!-- <div class="container p5 m-3">
-          <div class="custom-modal">
-            <b-row class="custom-modal-header">
-              <b-col cols="auto" class="mr-auto custom-modal-title pl-4">
-                Name
-              </b-col>
-            </b-row>
-          </div>
-        </div> -->
-
         <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
           <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
 
@@ -212,7 +201,8 @@ export default {
   },
   methods: {
     onRowSelect(data) {
-      console.log("selected", data);
+      let route = this.$router.resolve({ path: '/jobs/' + data[0].id , params: { id: data[0].id }})
+      window.open(route.href, '_blank');
     },
     showCreateJobModal() {
       // this.showAlert("Successfully Created", "green");
@@ -307,13 +297,6 @@ export default {
   
 }
 </script>
-
-<style scoped>
-  /* b-card {
-    border-radius: 0 !important;
-  } */
-</style>
-
 
 
 
