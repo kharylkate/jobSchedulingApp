@@ -50,7 +50,7 @@
                 <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
               </template>
               <template v-slot:cell(actions)="data">
-                <b-button class="btn-update-script px-1 py-1" size="sm" v-if="(data.item.script !== null || data.item.script !== '')">
+                <b-button class="btn-update-script px-1 py-1" size="sm" v-if="(data.item.script !== null || data.item.script !== '')" @click="showUpdateJobModal(data.item)">
                     &nbsp; <unicon class="icon-update-script" name="pen" fill="white"></unicon>
                     Update&nbsp;&nbsp;
                 </b-button>
@@ -66,14 +66,14 @@
               <b-form-input id="name-input" size="sm" v-model="job.name" required />
             </b-form-group>
 
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
-              :state="state.command" label-for="command-input" invalid-feedback="Command is required">
-              <b-form-input id="command-input" size="sm" v-model="job.command" required />
-            </b-form-group>
-
             <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
               label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
               <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
+            </b-form-group>
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
+              :state="state.command" label-for="command-input" invalid-feedback="Command is required">
+              <b-form-input id="command-input" size="sm" v-model="job.command" required />
             </b-form-group>
 
             <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
@@ -99,6 +99,53 @@
                   @click="createJob()"
                 >
                   Create
+                </b-button>
+              </div>
+            </div>
+          </template>
+        </b-modal>
+
+        <b-modal centered id="update-job" title="Update Job" @hidden="resetCreateJobModal" @ok="updateJob">
+          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
+            :state="state.name" label-for="name-input" invalid-feedback="Name is required">
+              <b-form-input id="name-input" size="sm" v-model="job.name" required />
+            </b-form-group>
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
+              label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
+              <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
+            </b-form-group>
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
+              :state="state.command" label-for="command-input" invalid-feedback="Command is required">
+              <b-form-input id="command-input" size="sm" v-model="job.command" required />
+            </b-form-group>
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
+              label-for="status-input" :state="state.status" invalid-feedback="Status is required">
+              <b-form-radio-group id="status-input" class="pt-2"
+                :options="[{ text: 'Enabled', value: true}, { text: 'Disabled', value: false }]" v-model="job.status" required/>
+            </b-form-group>
+          </form>
+          <template #modal-footer>
+            <div class="w-100">
+              <!-- <p class="float-left">Modal Footer Content</p> -->
+              <div class="float-right">
+                <b-button
+                  variant="disabledbg"
+                  size="sm"
+                  @click="resetCreateJobModal"
+                >
+                  Cancel
+                </b-button>
+                <b-button
+                  variant="btn-primary"
+                  size="sm"
+                  @click="updateJob(state.id)"
+                >
+                  Update
                 </b-button>
               </div>
             </div>
@@ -168,6 +215,7 @@ export default {
         },
       ],
       job: {
+        id: null,
         name: null,
         command: null,
         status: null,
@@ -205,9 +253,6 @@ export default {
       window.open(route.href, '_blank');
     },
     showCreateJobModal() {
-      // this.showAlert("Successfully Created", "green");
-      // this.show.$bvModal
-      // console.log(this);
       this.$bvModal.show("create-new-job");
     },
     resetCreateJobModal() {
@@ -245,6 +290,51 @@ export default {
           this.showAlert("Error", "red");
         }
       })
+    },
+    showUpdateJobModal(data) {
+      this.job = {
+        id: data.id,
+        name: data.name,
+        schedule: data.schedule,
+        command: data.command,
+        status: data.status,
+      }
+      this.$bvModal.show("update-job");
+    },
+    async updateJob() {
+      
+      console.log(this.job);
+      if(!this.validation()) {
+        return;
+      }
+
+      this.show = true;
+      await this.$store.dispatch("Jobs/updateJob", this.job).then(async res => {
+        console.log("res", res);
+        if(res.status == 204) {
+          await this.$store.dispatch("Jobs/fetchListJobs").then(result => {
+            console.log("results", result);
+          });
+          this.job = {
+            name: null,
+            command: null,
+            status: null,
+            schedule: null,
+          }
+          this.state = {
+            name: null,
+            command: null,
+            status: null,
+            schedule: null,
+          }
+          this.showAlert("Successfully Updated", "green");
+          this.$bvModal.hide("update-job");
+        } else {
+          this.showAlert("Error", "red");
+        }
+      })
+
+      this.show = false;
     },
     validation() {
       if(this.job.name == null || this.job.name.length < 1) {

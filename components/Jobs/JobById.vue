@@ -21,14 +21,14 @@
                 </div>
 
                 <b-row class="m-0">
-                    <b-col class="job-row-info" cols="5" md="auto">
+                    <b-col class="job-row-info" sm="auto">
                         <div class="job-schedules pt-2">
                             <div class="ml-4 pl-4 pt-4 pb-4"> Next Trigger in 10 Days </div>
                             <ul class="timeline">
                                 <li v-for="(date, index) in nextTriggerDates" :key="index">
                                 <p class="timeline-date"></p>
                                     <div class="timeline-content">
-                                        <p>{{ date.date }} <br /> {{ date.time }}</p>
+                                        <p>{{ date.date }}&nbsp;{{ date.time }}</p>
                                     </div>
                                 </li>
                                 <!-- <li>
@@ -107,9 +107,7 @@
 
                 <b-modal class="modal-script" scrollable title="Create Script" id="create-script">
                     <b-container fluid>
-                        <b-form-textarea id="modal-script-text-area" size="sm" placeholder="Create Script" >
-
-                        </b-form-textarea>
+                        
                     </b-container>
 
                 </b-modal>
@@ -193,7 +191,7 @@ export default {
                     try {
                         var obj = interval.next();
                         this.nextTriggerDates.push({ 
-                            date: moment(obj.value.toString()).format("dddd, MMMM Do YYYY"),
+                            date: moment(obj.value.toString()).format("ddd, MMMM DD, YYYY"),
                             time: moment(obj.value.toString()).format("h:mm:ss a")});
                     } catch (e) {
                         break;

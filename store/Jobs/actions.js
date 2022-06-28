@@ -17,4 +17,12 @@ export default {
             message: "Successfully Created"
         }
     },
+
+    updateJob({ commit }, data) {
+        commit("updateJob", data)
+        return {
+            status: 204,
+            message: "Successfully Updated"
+        }
+    },
 }
