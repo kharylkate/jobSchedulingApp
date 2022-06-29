@@ -2,14 +2,11 @@ export default {
 
     setListJobs(state, data) {
         state.listJobs = data;
-        return state.listJobs;
     },
 
-    setJobById(state, data) {
-        let job = state.listJobs.filter(job => job.id == data)
-        state.jobById = job;
-        return state.jobById;
-        // state.jobById = data;
+    async setJobById(state, data) {
+        state.jobById = data[0];
+        return data[0];
     },
 
     createJob: (state, data) => {
@@ -24,7 +21,6 @@ export default {
         })
         let ind = index.filter((item) => item != undefined);
         state.listJobs[ind] = data;
-        return data;
-        
+        console.log(state.listJobs[ind]);
     }
 }

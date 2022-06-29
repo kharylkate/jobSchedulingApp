@@ -177,6 +177,9 @@ export default {
   data() {
     return {
       show: false,
+      user: {
+        id: 6
+      },
       list: [],
       fields: [
         {
@@ -249,6 +252,7 @@ export default {
   },
   methods: {
     onRowSelect(data) {
+      console.log(data)
       let route = this.$router.resolve({ path: '/jobs/' + data[0].id , params: { id: data[0].id }})
       window.open(route.href, '_blank');
     },
@@ -257,6 +261,12 @@ export default {
     },
     resetCreateJobModal() {
       this.job = {
+        name: null,
+        command: null,
+        status: null,
+        schedule: null,
+      }
+      this.state = {
         name: null,
         command: null,
         status: null,
@@ -278,12 +288,14 @@ export default {
             status: null,
             schedule: null,
           }
+
           this.state = {
             name: null,
             command: null,
             status: null,
             schedule: null,
           }
+
           this.showAlert("Successfully Created", "green");
           this.$bvModal.hide("create-new-job");
         } else {
@@ -292,41 +304,28 @@ export default {
       })
     },
     showUpdateJobModal(data) {
+      console.log("data", data);
       this.job = {
         id: data.id,
         name: data.name,
         schedule: data.schedule,
         command: data.command,
         status: data.status,
+        modified_by: this.user.id,
       }
       this.$bvModal.show("update-job");
     },
     async updateJob() {
-      
-      console.log(this.job);
       if(!this.validation()) {
         return;
       }
 
       this.show = true;
       await this.$store.dispatch("Jobs/updateJob", this.job).then(async res => {
-        console.log("res", res);
-        if(res.status == 204) {
-          await this.$store.dispatch("Jobs/fetchListJobs").then(result => {
-            console.log("results", result);
-          });
-          this.job = {
-            name: null,
-            command: null,
-            status: null,
-            schedule: null,
-          }
-          this.state = {
-            name: null,
-            command: null,
-            status: null,
-            schedule: null,
-          }
+        if(res && res.status == 204) {
+          await this.$store.dispatch("Jobs/fetchListJobs")
+          this.job = {}
+
           this.showAlert("Successfully Updated", "green");
           this.$bvModal.hide("update-job");
         } else {
@@ -382,7 +381,7 @@ export default {
 
   },
   async beforeCreate() {
-    // await this.$store.dispatch("Jobs/fetchListJobs").then(res => console.log(res));
+    await this.$store.dispatch("Jobs/fetchListJobs").then(res => console.log(res));
   },
   
 }
