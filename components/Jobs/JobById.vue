@@ -118,13 +118,19 @@
                     </b-row>
                 </b-container>
 
-                <b-container fluid class="bords">
+                <b-container fluid class="">
                     <b-card-header header-tag="header" role="tab">
                         <b-button block v-b-toggle.accordion-1 variant="secondary">Logs</b-button>
                     </b-card-header>
                     <b-collapse class="text-white" id="accordion-1" visible accodrion="accordion" role="tab-panel" >
-                        <b-container fluid class="p-4 m-3">
+                        <b-container fluid class="p-4 m-3 cron-logs">
                             <b-card-text> <code>BFI@BFI-ITG10 MINGW64 ~ </code> </b-card-text>
+                            <b-card-text v-if="cronLog != ''"> 
+                                <ul style="list-style: none" v-for="(key, item) in cronLog.stdout" :key="key">
+                                    <li> <code> {{ item }} AAAAAAAAAA {{ key }} </code> </li>
+                                </ul>
+                                
+                            </b-card-text>
                         </b-container>
                     </b-collapse>
                 </b-container>
@@ -197,22 +203,23 @@ export default {
     computed: {
         ...mapGetters({
             listJobs: "Jobs/getListJobs",
+            cronLog: "Jobs/getCronTail"
         }),
 
         
     },
     async created() {
+        this.getCronLog();
     },
     methods: { 
-        // getJobById() {
-        //     this.job = null;
-        //     this.listJobs.map(task => {
-        //         console.log(job)
-        //         if(task.id === this.$route.params.id) {
-        //             this.job = task;
-        //         } 
-        //     })
-        // },
+        async getCronLog() {
+            let data = {
+                action: "cron-read-log-specific-lastlines",
+                filename: '/home/kkortiz/test.txt',
+                executed_by: 6,
+            }
+            this.$store.dispatch("Jobs/runCommand", data)
+        },
         activateTextArea() {
             this.activeText ? this.activeText = false : this.activeText = true;
         },

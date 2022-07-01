@@ -22,5 +22,22 @@ export default {
         let ind = index.filter((item) => item != undefined);
         state.listJobs[ind] = data;
         console.log(state.listJobs[ind]);
+    },
+
+    runCommand: (state, data) => {
+        state.log = data;
+    },
+
+    cronReadLogSpecific: (state, data) => {
+        if(data && data.stdout) {
+            let output = data.stdout.split('\n')
+            state.cronTail = {
+                code: data.code,
+                signal: data.signal,
+                stderr: data.stderr,
+                stdout: output
+            }
+        }
+
     }
 }

@@ -71,4 +71,26 @@ export default {
         })
         
     },
+
+    async runCommand({ commit }, data) {
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/connect/`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: data,
+        }).then(res => {
+            console.log(res);
+            switch (data.action) {
+                case 'cron-read-log-specific-lastlines':
+                    console.log("cron read log");
+                    commit("cronReadLogSpecific", (res.data));
+
+            }
+            return res.data;
+
+        })
+    },
+
 }

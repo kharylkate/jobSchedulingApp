@@ -54,6 +54,15 @@ $theme-colors: (
     background-color: #CED3D0;
 }
 
+
+
+.cron-logs {
+    height: 300px;
+    border-color: #36d6b6;
+    border-width: 2px solid;
+    overflow-y: scroll;
+}
+
 // .custom-modal-exit-btn {
 //     margin: 0;
 //     padding: 0;
