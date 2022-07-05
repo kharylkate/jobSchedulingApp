@@ -2,6 +2,7 @@ export default () => ({
     listJobs: [],
     jobById: {},
     cronTail: {},
+    listFiles: [],
     // listJobs: [
     //     {
     //         id: '1',

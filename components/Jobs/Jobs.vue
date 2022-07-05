@@ -27,8 +27,12 @@
                   $root crontab -l
                 </div>
                 <div class="jobs-table-create ml-auto mr-0">
+                  <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateFileModal()">
+                    <unicon class="unicon" name="plus" fill="white" /> <b>FILE&nbsp;</b>
+                  </b-button>
+                  &nbsp;&nbsp;
                   <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateJobModal()">
-                    <unicon class="unicon" name="plus" fill="white" /> <b>CREATE&nbsp;</b>
+                    <unicon class="unicon" name="plus" fill="white" /> <b>JOB&nbsp;</b>
                   </b-button>
                 </div>
               </b-row>
@@ -58,6 +62,7 @@
             </b-table>
           </div>
 
+        <!-- job create modal -->
         <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
           <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
 
@@ -105,6 +110,7 @@
           </template>
         </b-modal>
 
+        <!-- job update modal -->
         <b-modal centered id="update-job" title="Update Job" @hidden="resetCreateJobModal" @ok="updateJob">
           <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
 
@@ -152,6 +158,46 @@
           </template>
         </b-modal>
 
+        <!-- file create modal -->
+        <b-modal centered id="create-new-file" title="Create File" size="lg" @hidden="resetCreateFileModal" @ok="createFile">
+          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="File Name" 
+            :state="file_state.filename" label-for="file-input" invalid-feedback="File Name is required">
+              <b-form-input id="file-input" size="sm" v-model="file.filename" required />
+            </b-form-group>
+
+            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Script" 
+              label-for="script-input" :state="file_state.text" invalid-feedback="Script is required">
+              <b-form-textarea id="script-input" size="sm" v-model="file.text" rows="5" required>
+                <!-- <b-form-input  /> -->
+              </b-form-textarea>
+            </b-form-group>
+
+          </form>
+          <template #modal-footer>
+            <div class="w-100">
+              <!-- <p class="float-left">Modal Footer Content</p> -->
+              <div class="float-right">
+                <b-button
+                  variant="disabledbg"
+                  size="sm"
+                  @click="resetCreateFileModal"
+                >
+                  Cancel
+                </b-button>
+                <b-button
+                  variant="btn-primary"
+                  size="sm"
+                  @click="createFile()"
+                >
+                  Create
+                </b-button>
+              </div>
+            </div>
+          </template>
+        </b-modal>
+
         <!-- alert -->
         <div>
           <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
@@ -168,6 +214,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import moment from 'moment';
 import cronstrue from "cronstrue";
 
 export default {
@@ -204,10 +251,14 @@ export default {
         },{
           key: "status",
           label: "Status",
-          // formatter: value => {
-          //   if(value == null) return "";
-          //   return value ? "Enabled" : "Disabled";
-          // },
+          thClass: "thead-colorless",
+          tdClass: "align-middle"
+        },{
+          key: "created_at",
+          label: "Date Created",
+          formatter: value => {
+            return moment(value).format('MMM DD, YYYY, h:mm A')
+          },
           thClass: "thead-colorless",
           tdClass: "align-middle"
         },{
@@ -234,6 +285,14 @@ export default {
         command: null,
         status: null,
         schedule: null,
+      },
+      file: {
+        filename: "",
+        text: "",
+      },
+      file_state: {
+        filename: null,
+        text: null
       }
     }
   },
@@ -258,20 +317,17 @@ export default {
     },
     showCreateJobModal() {
       this.$bvModal.show("create-new-job");
-    },
-    resetCreateJobModal() {
       this.job = {
         name: null,
         command: null,
         status: null,
         schedule: null,
+        created_by: this.user.id,
       }
-      this.state = {
-        name: null,
-        command: null,
-        status: null,
-        schedule: null,
-      }
+    },
+    resetCreateJobModal() {
+      this.job = {}
+      this.state = {}
     },
     createJob() {
       console.log(this.job);
@@ -282,19 +338,9 @@ export default {
       this.$store.dispatch("Jobs/createJob", this.job).then(res => {
         console.log(res);
         if(res.status == 201) {
-          this.job = {
-            name: null,
-            command: null,
-            status: null,
-            schedule: null,
-          }
-
-          this.state = {
-            name: null,
-            command: null,
-            status: null,
-            schedule: null,
-          }
+          // 201 created status 
+          this.job = {}
+          this.state = {}
 
           this.showAlert("Successfully Created", "green");
           this.$bvModal.hide("create-new-job");
@@ -335,6 +381,52 @@ export default {
 
       this.show = false;
     },
+    showCreateFileModal() {
+      this.file = {
+        filename: "",
+        text: "",
+        created_by: this.user.id,
+      }
+      this.file_state = {
+        filename: null,
+        text: null,
+      }
+      this.$bvModal.show("create-new-file");
+    },
+    resetCreateFileModal() {
+      this.file = {
+        filename: "",
+        text: "",
+      }
+      this.file_state = {
+        filename: null,
+        text: null,
+      }
+      this.$bvModal.hide("create-new-file");
+    },
+    async createFile() {
+      if(!this.validate_file()) {
+        return;
+      }
+
+      this.show = true;
+      await this.$store.dispatch("Jobs/createFile", this.file).then(async res => {
+        console.log(res);
+
+        if(res && res.status == 204) {
+          await this.$store.dispatch("Jobs/fetchListFiles")
+          this.file = {}
+
+          this.showAlert("Successfully Created", "green");
+          this.$bvModal.hide("create-new-file");
+        } else {
+          this.showAlert("Error", "red");
+        }
+      })
+
+
+
+    },
     validation() {
       if(this.job.name == null || this.job.name.length < 1) {
         document.getElementById("name-input").style.borderColor = "red";
@@ -366,6 +458,29 @@ export default {
       }
 
       if(this.job.name != null && this.job.command != null && this.job.schedule != null && this.job.status != null) {
+        return true;
+      }
+      
+      return false;
+    },
+
+    validate_file() {
+      if(this.file.filename == null || this.file.filename.length < 1) {
+        document.getElementById("file-input").style.borderColor = "red";
+        this.file_state.filename = false;
+      } else {
+        document.getElementById("file-input").style.borderColor = "";
+        this.file_state.filename = true;
+      }
+      if(this.file.text == null || this.file.text.length < 1) {
+        document.getElementById("script-input").style.borderColor = "red";
+        this.file_state.text = false;
+      } else {
+        document.getElementById("script-input").style.borderColor = "";
+        this.file_state.text = true;
+      }
+
+      if(this.file.filename != null && this.file.text != null) {
         return true;
       }
       

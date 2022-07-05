@@ -12,5 +12,10 @@ export default {
     getCronTail(state) {
         console.log(state.cronTail)
         return state.cronTail;
+    },
+
+    getListFiles(state) {
+        console.log(state.listFiles);
+        return state.listFiles;
     }
 }

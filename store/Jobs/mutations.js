@@ -38,6 +38,25 @@ export default {
                 stdout: output
             }
         }
+    },
 
+    setListFiles(state, data) {
+        state.listFiles = data;
+    },
+
+    setFile: (state, data) => {
+        state.listFiles.push(data);
+    },
+
+    updateFile: (state, data) => {
+        let index = state.listFiles.map((val, ind) => {
+            if(val.id == data.id) {
+                return ind;
+            }
+        })
+
+        let ind = index.filted((item) => item != undefined);
+        state.listFiles[ind] = data;
+        console.log(state.listFiles[ind]);
     }
 }

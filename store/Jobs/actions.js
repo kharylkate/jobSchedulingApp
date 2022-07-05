@@ -35,17 +35,33 @@ export default {
         }).catch(err => err);
     },
 
-    createJob({ commit }, data) {
-        commit("createJob", data);
-        return {
-            status: 201,
-            message: "Successfully Created"
-        }
+    async createJob({ commit }, data) {
+        console.log(data);
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/jobs/`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: { 
+                name: data.name, 
+                schedule: data.schedule,
+                command: data.command,
+                status: data.status,
+                created_by: data.created_by,
+            },
+        }).then( async res => {
+            console.log(res)
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setListJobs", data);
+            } else {
+                await commit("setListJobs", data);
+            }
+            return res;
+        }).catch(err => err);
     },
 
     async updateJob({ commit }, data) {
-        console.log("data", data);
-        console.log("data", data.id);
         return await axios({
             method: "PUT",
             url: `${this.$axios.defaults.baseURL}/jobs/${data.id}`,
@@ -60,7 +76,6 @@ export default {
                 modified_by: data.modified_by,
             },
         }).then(res => {
-            console.log(res);
             if(res) {
                 commit("updateJob", data)
                 return {
@@ -91,6 +106,70 @@ export default {
             return res.data;
 
         })
+    },
+
+    async fetchListFiles({ commit }, data) {
+        return await axios({
+            method: "GET",
+            url: `${this.$axios.defaults.baseURL}/files`,
+            headers: {
+                "Content-Type": "application/json, text/plain, */*"
+            }
+        }).then( async res => {
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setListFiles", res.data);
+            } else {
+                await commit("setListFiles", ok);
+            }
+            return res;
+        }).catch(err => err);
+    },
+
+    async createFile({ commit }, data) {
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/file/`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: { 
+                filename: data.filename,
+                script: data.text,
+                created_by: data.created_by,
+            },
+        }).then( async res => {
+            console.log(res)
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setFile", data);
+            } else {
+                await commit("setFile", data);
+            }
+            return res;
+        }).catch(err => err);
+    },
+
+    async updateFile() {
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/file/`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: { 
+                id: data.id,
+                filename: data.filename,
+                script: data.text,
+                modified_by: data.modified_by,
+            },
+        }).then( async res => {
+            console.log(res)
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("updateFile", data);
+            } else {
+                await commit("updateFile", data);
+            }
+            return res;
+        }).catch(err => err);
     },
 
 }

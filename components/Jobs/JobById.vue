@@ -22,7 +22,7 @@
 
                 <b-container fluid class="m-0">
                     <b-row class="m-0">
-                        <b-col class="job-row-info" lg="3" >
+                        <!-- <b-col class="job-row-info" lg="3" >
                             <div class="job-schedules pt-2">
                                 <div class="ml-4 pl-4 pr-4 pt-4 pb-4"> Next Trigger in 10 Days </div>
                                 <ul class="timeline">
@@ -31,7 +31,7 @@
                                         <div class="timeline-content">
                                             <p>{{ date.date }}&nbsp;{{ date.time }}</p>
                                         </div>
-                                    </li>
+                                    </li> -->
                                     <!-- <li>
                                         <p class="timeline-date">2007年2月</p>
                                         <div class="timeline-content">
@@ -50,9 +50,9 @@
                                         <p>私以外全員カナダ人という環境で英語やWebの技術を学びながら必死に働く</p>
                                         </div>
                                     </li> -->
-                                </ul>
+                                <!-- </ul>
                             </div>
-                        </b-col>
+                        </b-col> -->
 
                         <!-- for logs -->
                         <b-col class="pl-4 pr-4" SM >

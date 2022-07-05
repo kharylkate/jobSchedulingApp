@@ -38,6 +38,10 @@ export default {
           icon: "arrow",
           path: "/"
         }, {
+          name: "File",
+          icon: "file-alt",
+          path: "/"
+        }, {
           name: "Admin",
           icon: "lock-access",
           path: "/admin"
