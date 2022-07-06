@@ -324,6 +324,13 @@ export default {
         schedule: null,
         created_by: this.user.id,
       }
+
+      this.state = {
+        name: null,
+        command: null,
+        status: null,
+        schedule: null,
+      }
     },
     resetCreateJobModal() {
       this.job = {}
@@ -359,6 +366,15 @@ export default {
         status: data.status,
         modified_by: this.user.id,
       }
+
+      this.state = {
+        name: null,
+        command: null,
+        status: null,
+        schedule: null,
+        modified_by: this.user.id,
+      }
+
       this.$bvModal.show("update-job");
     },
     async updateJob() {
@@ -413,10 +429,9 @@ export default {
       await this.$store.dispatch("Jobs/createFile", this.file).then(async res => {
         console.log(res);
 
-        if(res && res.status == 204) {
+        if(res && res.status == 201) {
           await this.$store.dispatch("Jobs/fetchListFiles")
           this.file = {}
-
           this.showAlert("Successfully Created", "green");
           this.$bvModal.hide("create-new-file");
         } else {

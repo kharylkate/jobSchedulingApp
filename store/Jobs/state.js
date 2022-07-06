@@ -3,6 +3,7 @@ export default () => ({
     jobById: {},
     cronTail: {},
     listFiles: [],
+    fileById: {},
     // listJobs: [
     //     {
     //         id: '1',

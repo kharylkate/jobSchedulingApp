@@ -12,7 +12,7 @@ export default {
             if(res.data.length > 0 && Array.isArray(res.data)) {
                 await commit("setListJobs", res.data);
             } else {
-                await commit("setListJobs", ok);
+                await commit("setListJobs", []);
             }
             return res;
         }).catch(err => err);
@@ -116,19 +116,37 @@ export default {
                 "Content-Type": "application/json, text/plain, */*"
             }
         }).then( async res => {
+            console.log(res);
+            
             if(res.data.length > 0 && Array.isArray(res.data)) {
                 await commit("setListFiles", res.data);
             } else {
-                await commit("setListFiles", ok);
+                await commit("setListFiles", []);
             }
             return res;
+        }).catch(err => err);
+    },
+
+    async fetchFileById({ commit }, data) {
+        const id = parseInt(data.id);
+        return await axios({
+            method: "GET",
+            url: `${this.$axios.defaults.baseURL}/files/${id}`
+        }).then(async res => {
+            if(res && res.data.length && Array.isArray(res.data)) {
+                await commit("setFileById", res.data);
+                return res.data[0];
+            } else {
+                await commit("setFileById", []);
+                return res.data[0];
+            }
         }).catch(err => err);
     },
 
     async createFile({ commit }, data) {
         return await axios({
             method: "POST",
-            url: `${this.$axios.defaults.baseURL}/file/`,
+            url: `${this.$axios.defaults.baseURL}/files/`,
             headers: {
                 "Content-Type": "application/json"
             },

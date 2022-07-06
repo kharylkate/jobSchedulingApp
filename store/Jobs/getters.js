@@ -17,5 +17,10 @@ export default {
     getListFiles(state) {
         console.log(state.listFiles);
         return state.listFiles;
-    }
+    },
+
+    getFileById(state) {
+        console.log("fileById",state)
+        return state.fileById;
+    },
 }

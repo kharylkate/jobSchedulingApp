@@ -44,6 +44,11 @@ export default {
         state.listFiles = data;
     },
 
+    async setFileById(state, data) {
+        state.fileById = data[0];
+        return data[0];
+    },
+
     setFile: (state, data) => {
         state.listFiles.push(data);
     },

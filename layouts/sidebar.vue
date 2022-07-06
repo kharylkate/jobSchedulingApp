@@ -40,7 +40,7 @@ export default {
         }, {
           name: "File",
           icon: "file-alt",
-          path: "/"
+          path: "/files"
         }, {
           name: "Admin",
           icon: "lock-access",
