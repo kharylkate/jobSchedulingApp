@@ -27,9 +27,9 @@
                   $root crontab -l
                 </div>
                 <div class="jobs-table-create ml-auto mr-0">
-                  <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateFileModal()">
+                  <!-- <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateFileModal()">
                     <unicon class="unicon" name="plus" fill="white" /> <b>FILE&nbsp;</b>
-                  </b-button>
+                  </b-button> -->
                   &nbsp;&nbsp;
                   <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateJobModal()">
                     <unicon class="unicon" name="plus" fill="white" /> <b>JOB&nbsp;</b>

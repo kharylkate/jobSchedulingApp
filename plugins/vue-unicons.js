@@ -15,7 +15,8 @@ import { uniLayerGroupMonochrome,
     uniClock,
     uniUser,
     uniCheckCircle,
-    uniFileAlt
+    uniFileAlt,
+    uniEllipsisV
 } from "vue-unicons/dist/icons";
 
 Unicon.add([
@@ -34,7 +35,8 @@ Unicon.add([
     uniClock,
     uniUser,
     uniCheckCircle,
-    uniFileAlt
+    uniFileAlt,
+    uniEllipsisV
 ]);
 Vue.use(Unicon, {
     height: 20,

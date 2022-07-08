@@ -1,0 +1,19 @@
+.form-control:disabled, .script-textarea:disabled {
+    background-color: #121722 !important;
+}
+
+.script-border {
+    background-color: #121722;
+    color: white !important;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 3px;
+}
+
+#script-textarea {
+    color: #cfdbdb;
+}
+
+.script-details {
+    font-size: medium;
+}

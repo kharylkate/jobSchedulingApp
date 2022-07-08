@@ -1,4 +1,4 @@
-<template v-if="jobDataHasLoaded">
+<template v-if="fileDataHasLoaded">
     <div>
         <b-container fluid class="m-0 p-0">
             <b-row class="m-0 p-0">
@@ -6,7 +6,7 @@
                 <Sidebar />
             </b-col>
             <b-col class="content m-0 p-0">
-                <FileById :file="file" />
+                <FileById :id="parseInt(this.$route.params.id)" />
             </b-col>
             </b-row>
         </b-container>
@@ -28,29 +28,31 @@ export default {
     },
     data() {
         return {
-            file: {},
-            fileDataHasLoaded: false,
+            // file: {},
+            // fileDataHasLoaded: false,
         }
     },
     computed: {
     },
     async created() {
+        // await this.fetchInitData();
     },
     methods: {
-        async fetchInitData() {
-            await this.$store.dispatch("Jobs/fetchFileById", { id: this.$route.params.id }).then(async res => {
-                this.file = res;
-            }).finally(() => {
-                this.fileDataHasLoaded = true;
-            });
-        },
+        // async fetchInitData() {
+        //     await this.$store.dispatch("Jobs/fetchFileById", { id: this.$route.params.id }).then(async res => {
+        //         this.file = res;
+        //         console.log(res);
+        //     }).finally(() => {
+        //         this.fileDataHasLoaded = true;
+        //     });
+        // },
         
     },
     async beforeCreate() {
 
     },
     mounted() {
-        this.fetchInitData();
+        
     }
 }
 </script>

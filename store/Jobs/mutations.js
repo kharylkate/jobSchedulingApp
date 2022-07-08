@@ -60,7 +60,7 @@ export default {
             }
         })
 
-        let ind = index.filted((item) => item != undefined);
+        let ind = index.filter((item) => item != undefined);
         state.listFiles[ind] = data;
         console.log(state.listFiles[ind]);
     }

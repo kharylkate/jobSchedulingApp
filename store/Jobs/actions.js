@@ -128,11 +128,15 @@ export default {
     },
 
     async fetchFileById({ commit }, data) {
-        const id = parseInt(data.id);
+        
         return await axios({
             method: "GET",
-            url: `${this.$axios.defaults.baseURL}/files/${id}`
+            url: `${this.$axios.defaults.baseURL}/files/${data}`,
+            headers: {
+                "Content-Type": "application/json"
+            },
         }).then(async res => {
+            console.log(res);
             if(res && res.data.length && Array.isArray(res.data)) {
                 await commit("setFileById", res.data);
                 return res.data[0];
@@ -166,17 +170,17 @@ export default {
         }).catch(err => err);
     },
 
-    async updateFile() {
+    async updateFile({ commit }, data) {
         return await axios({
-            method: "POST",
-            url: `${this.$axios.defaults.baseURL}/file/`,
+            method: "PUT",
+            url: `${this.$axios.defaults.baseURL}/files/${data.id}`,
             headers: {
                 "Content-Type": "application/json"
             },
             data: { 
                 id: data.id,
                 filename: data.filename,
-                script: data.text,
+                script: data.script,
                 modified_by: data.modified_by,
             },
         }).then( async res => {
