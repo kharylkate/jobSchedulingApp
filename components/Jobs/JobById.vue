@@ -87,14 +87,6 @@
 
                                 <b-container class="pl-4 ml-4 mb-4">
                                     <b-row>
-                                        <!-- <div>
-                                            <b-table-simple small stacked 
-                                                :items="job"
-                                                
-                                                >
-                                                {{ job }}
-                                            </b-table-simple>
-                                        </div> -->
                                         <b-col sm="auto">
                                             <div class="job-info-text">Task Name</div>
                                             <div class="job-info-text">Cron Schedule</div>
@@ -209,7 +201,7 @@ export default {
         
     },
     async created() {
-        this.getCronLog();
+        await this.getCronLog();
     },
     methods: { 
         async getCronLog() {

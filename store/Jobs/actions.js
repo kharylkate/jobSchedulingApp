@@ -36,7 +36,6 @@ export default {
     },
 
     async createJob({ commit }, data) {
-        console.log(data);
         return await axios({
             method: "POST",
             url: `${this.$axios.defaults.baseURL}/jobs/`,
@@ -51,7 +50,6 @@ export default {
                 created_by: data.created_by,
             },
         }).then( async res => {
-            console.log(res)
             if(res.data.length > 0 && Array.isArray(res.data)) {
                 await commit("setListJobs", data);
             } else {
@@ -78,13 +76,11 @@ export default {
         }).then(res => {
             if(res) {
                 commit("updateJob", data)
-                return {
-                    status: 204,
-                    message: "Successfully Updated"
-                }
+                return res;
+            } else {
+                return res;
             }
-        })
-        
+        })        
     },
 
     async runCommand({ commit }, data) {
@@ -115,9 +111,7 @@ export default {
             headers: {
                 "Content-Type": "application/json, text/plain, */*"
             }
-        }).then( async res => {
-            console.log(res);
-            
+        }).then( async res => {            
             if(res.data.length > 0 && Array.isArray(res.data)) {
                 await commit("setListFiles", res.data);
             } else {
@@ -128,7 +122,6 @@ export default {
     },
 
     async fetchFileById({ commit }, data) {
-        
         return await axios({
             method: "GET",
             url: `${this.$axios.defaults.baseURL}/files/${data}`,
@@ -136,7 +129,6 @@ export default {
                 "Content-Type": "application/json"
             },
         }).then(async res => {
-            console.log(res);
             if(res && res.data.length && Array.isArray(res.data)) {
                 await commit("setFileById", res.data);
                 return res.data[0];

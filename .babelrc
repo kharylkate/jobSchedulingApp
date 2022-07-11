@@ -10,6 +10,13 @@
             }
           }
         ]
+      ],
+      "plugins": [
+        ["prismjs", {
+          "languages": ["shell", "bash", "shell-session", "sh-session", "shellsession"],
+          "plugins": ["line-numbers"],
+          "theme": "okaidia"
+        }]
       ]
     }
   }

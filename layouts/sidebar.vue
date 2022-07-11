@@ -3,7 +3,7 @@
         <div class="sidebar-header p-2 pt-2 m-2">
           <b-row>
             <div class="sidebar-header-logo">
-              <img class="sidebar-logo-bfi" src="/bfi-org.png" alt="bfi-org-logo-leaf">
+              <img class="sidebar-logo-bfi" src="/bfi-org.png" href="/" alt="bfi-org-logo-leaf">
             </div>
             <div class="sidebar-header-appname pt-1">
               <h4>

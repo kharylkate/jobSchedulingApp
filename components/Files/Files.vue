@@ -24,7 +24,7 @@
             <div class="jobs-table-top">
               <b-row>
                 <div class="jobs-table-command pt-1 mr-auto ml-0">
-                  $root crontab -l
+                  ${{ user.username }} crontab -l
                 </div>
                 <div class="jobs-table-create ml-auto mr-0">
                   <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateFileModal()">
@@ -35,7 +35,7 @@
               </b-row>
             </div>
             <b-table small hover responsive sticky-header selectable 
-              class="table-borderless border-0" 
+              class="table-borderless table-scrollbar border-0" 
               select-mode="single"
               :items="listFiles"
               :fields="fields"
@@ -56,24 +56,27 @@
 
         <!-- file create modal -->
         <b-modal centered id="create-new-file" title="Create File" size="lg" @hidden="resetCreateFileModal" @ok="createFile">
-          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
+          <b-form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
+              
+              <div>
+                <div class="file-name-label mb-1">File Name:</div>
+                <b-form-group :state="file_state.filename" label-for="file-input" invalid-feedback="File Name is required">
+                  <b-form-input id="file-input" size="sm" v-model="file.filename" required />
+                </b-form-group>
+              </div>
 
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="File Name" 
-            :state="file_state.filename" label-for="file-input" invalid-feedback="File Name is required">
-              <b-form-input id="file-input" size="sm" v-model="file.filename" required />
-            </b-form-group>
+            <div>
+              <div class="file-script-label mb-1">Script:</div>
+              <b-form-group :state="file_state.text" invalid-feedback="Script is required">
+                <b-form-textarea id="script-input" size="sm" v-model="file.text" rows="5" required>
+                  <!-- <b-form-input  /> -->
+                </b-form-textarea>
+              </b-form-group>
+            </div>
 
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Script" 
-              label-for="script-input" :state="file_state.text" invalid-feedback="Script is required">
-              <b-form-textarea id="script-input" size="sm" v-model="file.text" rows="5" required>
-                <!-- <b-form-input  /> -->
-              </b-form-textarea>
-            </b-form-group>
-
-          </form>
+          </b-form>
           <template #modal-footer>
             <div class="w-100">
-              <!-- <p class="float-left">Modal Footer Content</p> -->
               <div class="float-right">
                 <b-button
                   variant="disabledbg"
@@ -93,7 +96,7 @@
             </div>
           </template>
         </b-modal>
-
+        
         <!-- alert -->
         <div>
           <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
@@ -120,7 +123,8 @@ export default {
     return {
       show: false,
       user: {
-        id: 6
+        id: 6,
+        username: 'kkortiz'
       },
       list: [],
       fields: [
@@ -221,19 +225,19 @@ export default {
       if(!this.validate_file()) {
         return;
       }
-
+      this.$bvModal.hide("create-new-file");
       this.show = true;
       await this.$store.dispatch("Jobs/createFile", this.file).then(async res => {
-        console.log(res);
-
         if(res && res.status == 201) {
-          await this.$store.dispatch("Jobs/fetchListFiles")
+          await this.$store.dispatch("Jobs/fetchListFiles").then(res => {
+            console.log("object", res);
+          })
           this.file = {}
           this.showAlert("Successfully Created", "green");
-          this.$bvModal.hide("create-new-file");
         } else {
           this.showAlert("Error", "red");
         }
+        this.show = false;
       })
 
     },
@@ -304,7 +308,7 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Jobs/fetchListFiles").then(res => console.log(res));
+    await this.$store.dispatch("Jobs/fetchListFiles")//.then(res => console.log(res));
   },
   
 }

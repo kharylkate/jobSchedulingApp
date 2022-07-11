@@ -21,7 +21,6 @@ export default {
         })
         let ind = index.filter((item) => item != undefined);
         state.listJobs[ind] = data;
-        console.log(state.listJobs[ind]);
     },
 
     runCommand: (state, data) => {
@@ -63,5 +62,6 @@ export default {
         let ind = index.filter((item) => item != undefined);
         state.listFiles[ind] = data;
         console.log(state.listFiles[ind]);
+        return state.listFiles[ind];
     }
 }

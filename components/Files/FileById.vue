@@ -38,18 +38,21 @@
                                 <div>{{ file.filename }}</div>
                                 <div>{{ file.username }}</div>
                                 <div>{{ new Date(file.created_at) }}</div>
-                                <div v-if="file.modified_at != null">{{ file.modified_at }}</div>
+                                <div v-if="file.modified_at != null">{{ file.modified_at ? new Date(file.modified_at) : '' }}</div>
                             </b-col>
                     </b-row>
                     
                     <div class="m-0 script-border">
                         <b-row>
                             <b-col cols="auto" class="mr-auto mt-2">
-                                <p v-show="doneUpdate">Work is auto-saved!</p>
+                                <p v-show="doneUpdate">{{ autoUpdateMessage }}</p>
                             </b-col>
                             <b-col  cols="auto">
-                                <b-button @click="updateFile()">
+                                <b-button v-if="showCancelButton" @click="cancel()">
                                     <unicon class="unicon" name="pen" fill="white"></unicon>
+                                </b-button>
+                                <b-button @click="enableTextArea()">
+                                    <unicon class="unicon" :name="updateIcon ? 'pen' : 'save'" fill="white"></unicon>
                                 </b-button>
                             </b-col>
                         </b-row>
@@ -59,7 +62,6 @@
                             rows="5"
                             :disabled="disabled"
                         >
-                        <template></template>
                         </b-form-textarea>
                     </div>
                 </b-container>
@@ -99,6 +101,10 @@ export default {
             user: {
                 id: 6,
             },
+            autoUpdateMessage: "",
+            updateIcon: true,
+            showCancelButton: false,
+
         }
     },
     computed: {
@@ -111,7 +117,6 @@ export default {
         
     },
     async created() {
-        console.log(this.ID)
         await this.getFileById(this.ID);
         this.updatedScript = this.getFile.script;
     },
@@ -121,42 +126,47 @@ export default {
                 `<code> ${value} </code>`
             )
         },
-        updateFile() {
-            console.log(this);
+        async enableTextArea() {
             if(!this.disabled) {
                 this.disabled = true;
+                clearInterval(this.intervalId);
+                await this.updateFile(false);
             } else {
                 this.disabled = false;
-                this.getFile
-                const updatedScript = this.updatedScript;
-                this.intervalId = setInterval(() => {
-                    let data = {
-                        id: this.getFile.id,
-                        filename: this.getFile.id,
-                        script: this.updatedScript,
-                        modified_by: this.user .id,
-                    }
-                    console.log("updatedScript", this.updatedScript);
-                    this.$store.dispatch("Jobs/updateFile", data).then(res => {
-                        console.log(res);
-                        if(res.rowCount) {
-                            this.doneUpdate = true;
-                            setTimeout(() => {
-                                this.doneUpdate = false;
-                            }, 10000)
-                        }
-                    })
+                this.intervalId = await setInterval( async() => {
+                    await this.updateFile(true);
                 }, 60000)
+                
             }
         },
+        async updateFile(interval) {
+            this.updateIcon = (this.updateIcon ? false : true);
+            this.autoUpdateMessage = (interval ? 'Work is aut-saved' : 'Work has been saved!');
+            let data = {
+                id: this.getFile.id,
+                filename: this.getFile.filename,
+                script: this.updatedScript,
+                modified_by: this.user .id,
+            }
+            this.$store.dispatch("Jobs/updateFile", data).then(res => {
+                if(res.data.rowCount) {
+                    this.doneUpdate = true;
+                    setTimeout(() => {
+                        this.doneUpdate = false;
+                    }, 5000)
+                }
+            })
+        },
         async getFileById(id) {
-            console.log(id);
             await this.$store.dispatch("Jobs/fetchFileById", id).then(res => {
                 this.file = res;
             })
-        }
-        
-
+        },
+        cancel() {
+            this.updatedScript = this.getFile.script;
+            this.disabled = true;
+            
+        },
         
     },
     async beforeCreate() {

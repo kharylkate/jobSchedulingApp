@@ -24,12 +24,10 @@
             <div class="jobs-table-top">
               <b-row>
                 <div class="jobs-table-command pt-1 mr-auto ml-0">
-                  $root crontab -l
+                  ${{ user.username }} crontab -l
                 </div>
+                
                 <div class="jobs-table-create ml-auto mr-0">
-                  <!-- <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateFileModal()">
-                    <unicon class="unicon" name="plus" fill="white" /> <b>FILE&nbsp;</b>
-                  </b-button> -->
                   &nbsp;&nbsp;
                   <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateJobModal()">
                     <unicon class="unicon" name="plus" fill="white" /> <b>JOB&nbsp;</b>
@@ -218,14 +216,15 @@ import moment from 'moment';
 import cronstrue from "cronstrue";
 
 export default {
-  name: 'NuxtTutorial',
+  name: 'Jobs',
   components: {
   },
   data() {
     return {
       show: false,
       user: {
-        id: 6
+        id: 6,
+        username: 'kkortiz'
       },
       list: [],
       fields: [
@@ -382,17 +381,17 @@ export default {
         return;
       }
 
+      this.$bvModal.hide("update-job");
       this.show = true;
       await this.$store.dispatch("Jobs/updateJob", this.job).then(async res => {
+        
         if(res && res.status == 204) {
           await this.$store.dispatch("Jobs/fetchListJobs")
           this.job = {}
-
           this.showAlert("Successfully Updated", "green");
-          this.$bvModal.hide("update-job");
-        } else {
-          this.showAlert("Error", "red");
         }
+      }).catch((e) => {
+        this.showAlert(e.response.data.errorMsg, "red");
       })
 
       this.show = false;
