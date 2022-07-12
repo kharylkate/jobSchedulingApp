@@ -186,4 +186,44 @@ export default {
         }).catch(err => err);
     },
 
+    async fetchUserByUsername({ commit }, data) {
+        console.log(data);
+        return await axios({
+            method: "GET",
+            url: `${this.$axios.defaults.baseURL}/users/${data}`,
+            headers: {
+                "Content-Type": "application/json, text/plain, */*"
+            },
+            data: {
+                username: data
+            }
+        }).then(async res => {
+            return res;
+        }).catch(err => err);
+    },
+
+    async login({ commit }, data) {
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/login/`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: { 
+                username: data.username,
+                password: data.password
+            },
+        }).then( async res => {
+            console.log(res)
+            // if(res.data.length > 0 && Array.isArray(res.data)) {
+            //     await commit("setFile", data);
+            // } else {
+            //     await commit("setFile", data);
+            // }
+            return res;
+        }).catch(err => err);
+    }
+
+
+
 }

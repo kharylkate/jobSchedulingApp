@@ -2,13 +2,42 @@
     background-color: #2F343F !important;
 }
 
-.login-card {
-    // border: 0px;
-}
+// .login-card {
+//     // border: 0px;
+// }
 
-.username-box, .password-box {
-    background-color: #2F343F;
+.creds-box {
+    background-color: #2F343F !important;
     // border-width: 2px;
     // border-style: solid;
     // border-color: aliceblue;
 }
+
+input#username.form-control, input#password.form-control {
+    background-color: #2F343F;
+    // border-width: 0px 0px 1px 0px;
+    // border-color: #78A87F;
+    // border-style: solid;
+    // border-radius: 0px;
+    border: 0px;
+}
+
+code.code-label {
+    color: #78A87F;
+    font-size: 16px;
+}
+
+code.not-found {
+    color: #BA4A4E;
+    font-size: 16px;
+}
+
+code.blink {
+    animation: blinker 1s step-start infinite;
+}
+
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }
