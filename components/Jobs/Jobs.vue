@@ -3,28 +3,23 @@
     <div class="main-content p-0 m-0">
       <b-overlay :show="show">
         <div class="header">
-          <b-navbar toggleable="lg" type="dark">
-            <b-nav-form>
-              <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-              <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-            </b-nav-form>
-
-            <b-dropdown class="ml-auto" right>
-              <b-dropdown-item href="#">Profile</b-dropdown-item>
-              <b-dropdown-item href="#">Sign Out</b-dropdown-item>
-              </b-dropdown>
-            </b-navbar>
-
-            <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
-              <h3> Jobs </h3>
-            </div>
+          <Navbar />
+          <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
+            <h3> Jobs </h3>
+          </div>
         </div>
 
           <div class="jobs-table">
             <div class="jobs-table-top">
               <b-row>
                 <div class="jobs-table-command pt-1 mr-auto ml-0">
-                  ${{ user.username }} crontab -l
+                  <!-- ${{ user.username }} crontab -l -->
+                  <b-form-input class="p-0 m-0 input-search" id="input-search" 
+                    v-model="search" type="text" 
+                    ref="username"
+                    autocomplete="false"
+                    required>
+                  </b-form-input>
                 </div>
                 
                 <div class="jobs-table-create ml-auto mr-0">
@@ -42,11 +37,6 @@
               :fields="fields"
               @row-selected="onRowSelect"
             >
-              <!-- <template v-slot:cell(name)="data">
-                <nuxt-link :to='/jobs/+ data.item.id' :jobItem="[ data.item ]" target="_blank">
-                  {{ data.item.name }}
-                </nuxt-link>
-              </template> -->
               <template v-slot:cell(status)="data">
                 <b-badge v-if="(data.item.status)" variant="secondary">ENABLED</b-badge>
                 <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
@@ -87,7 +77,6 @@
           </form>
           <template #modal-footer>
             <div class="w-100">
-              <!-- <p class="float-left">Modal Footer Content</p> -->
               <div class="float-right">
                 <b-button
                   variant="disabledbg"
@@ -156,46 +145,6 @@
           </template>
         </b-modal>
 
-        <!-- file create modal -->
-        <b-modal centered id="create-new-file" title="Create File" size="lg" @hidden="resetCreateFileModal" @ok="createFile">
-          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="File Name" 
-            :state="file_state.filename" label-for="file-input" invalid-feedback="File Name is required">
-              <b-form-input id="file-input" size="sm" v-model="file.filename" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Script" 
-              label-for="script-input" :state="file_state.text" invalid-feedback="Script is required">
-              <b-form-textarea id="script-input" size="sm" v-model="file.text" rows="5" required>
-                <!-- <b-form-input  /> -->
-              </b-form-textarea>
-            </b-form-group>
-
-          </form>
-          <template #modal-footer>
-            <div class="w-100">
-              <!-- <p class="float-left">Modal Footer Content</p> -->
-              <div class="float-right">
-                <b-button
-                  variant="disabledbg"
-                  size="sm"
-                  @click="resetCreateFileModal"
-                >
-                  Cancel
-                </b-button>
-                <b-button
-                  variant="btn-primary"
-                  size="sm"
-                  @click="createFile()"
-                >
-                  Create
-                </b-button>
-              </div>
-            </div>
-          </template>
-        </b-modal>
-
         <!-- alert -->
         <div>
           <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
@@ -217,15 +166,10 @@ import cronstrue from "cronstrue";
 
 export default {
   name: 'Jobs',
-  components: {
-  },
   data() {
     return {
       show: false,
-      user: {
-        id: 6,
-        username: 'kkortiz'
-      },
+      user: JSON.parse(localStorage.user),
       list: [],
       fields: [
         {
@@ -285,14 +229,7 @@ export default {
         status: null,
         schedule: null,
       },
-      file: {
-        filename: "",
-        text: "",
-      },
-      file_state: {
-        filename: null,
-        text: null
-      }
+      search: "",
     }
   },
   async created(){
@@ -303,7 +240,6 @@ export default {
     }),
 
     cronToString(schedule) {
-      console.log(schedule);
       return cronstrue.toString(schedule)
     }
 
@@ -335,16 +271,17 @@ export default {
       this.job = {}
       this.state = {}
     },
-    createJob() {
+    async createJob() {
       console.log(this.job);
       if(!this.validation()) {
         return;
       }
 
-      this.$store.dispatch("Jobs/createJob", this.job).then(res => {
+      await this.$store.dispatch("Jobs/createJob", this.job).then(async res => {
         console.log(res);
         if(res.status == 201) {
           // 201 created status 
+          await this.$store.dispatch("Jobs/getListJobs");
           this.job = {}
           this.state = {}
 
@@ -385,7 +322,7 @@ export default {
       this.show = true;
       await this.$store.dispatch("Jobs/updateJob", this.job).then(async res => {
         
-        if(res && res.status == 204) {
+        if(res && res.status == 200) {
           await this.$store.dispatch("Jobs/fetchListJobs")
           this.job = {}
           this.showAlert("Successfully Updated", "green");
@@ -395,51 +332,6 @@ export default {
       })
 
       this.show = false;
-    },
-    showCreateFileModal() {
-      this.file = {
-        filename: "",
-        text: "",
-        created_by: this.user.id,
-      }
-      this.file_state = {
-        filename: null,
-        text: null,
-      }
-      this.$bvModal.show("create-new-file");
-    },
-    resetCreateFileModal() {
-      this.file = {
-        filename: "",
-        text: "",
-      }
-      this.file_state = {
-        filename: null,
-        text: null,
-      }
-      this.$bvModal.hide("create-new-file");
-    },
-    async createFile() {
-      if(!this.validate_file()) {
-        return;
-      }
-
-      this.show = true;
-      await this.$store.dispatch("Jobs/createFile", this.file).then(async res => {
-        console.log(res);
-
-        if(res && res.status == 201) {
-          await this.$store.dispatch("Jobs/fetchListFiles")
-          this.file = {}
-          this.showAlert("Successfully Created", "green");
-          this.$bvModal.hide("create-new-file");
-        } else {
-          this.showAlert("Error", "red");
-        }
-      })
-
-
-
     },
     validation() {
       if(this.job.name == null || this.job.name.length < 1) {
@@ -477,29 +369,6 @@ export default {
       
       return false;
     },
-
-    validate_file() {
-      if(this.file.filename == null || this.file.filename.length < 1) {
-        document.getElementById("file-input").style.borderColor = "red";
-        this.file_state.filename = false;
-      } else {
-        document.getElementById("file-input").style.borderColor = "";
-        this.file_state.filename = true;
-      }
-      if(this.file.text == null || this.file.text.length < 1) {
-        document.getElementById("script-input").style.borderColor = "red";
-        this.file_state.text = false;
-      } else {
-        document.getElementById("script-input").style.borderColor = "";
-        this.file_state.text = true;
-      }
-
-      if(this.file.filename != null && this.file.text != null) {
-        return true;
-      }
-      
-      return false;
-    },
     showAlert(message, color) {
       this.alert = {
         showAlert: 3,
@@ -510,16 +379,8 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Jobs/fetchListJobs").then(res => console.log(res));
+    await this.$store.dispatch("Jobs/fetchListJobs");
   },
   
 }
 </script>
-
-
-
-// npm install ssh2-sftp-client (for connecting to ssh-putty)
-// https://www.npmjs.com/package/ssh2-sftp-client#sec-3
-
-// npm install bree (for cron stuff)
-// https://jobscheduler.net/#/

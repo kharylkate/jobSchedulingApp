@@ -14,11 +14,9 @@
 </template>
 
 <script>
-// import Jobs from '../components/Jobs/Jobs.vue';
 import Sidebar from '../../layouts/sidebar.vue';
 export default {
     name: "IndexPage",
-    // layout: "sidebar",
-    components: { Sidebar }
+    components: { Sidebar },
 }
 </script>

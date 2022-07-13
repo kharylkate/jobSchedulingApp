@@ -3,29 +3,29 @@
     <div class="main-content p-0 m-0">
       <b-overlay :show="show">
         <div class="header">
-          <b-navbar toggleable="lg" type="dark">
-            <b-nav-form>
-              <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-              <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-            </b-nav-form>
+          <Navbar />
 
-            <b-dropdown class="ml-auto" right>
-              <b-dropdown-item href="#">Profile</b-dropdown-item>
-              <b-dropdown-item href="#">Sign Out</b-dropdown-item>
-              </b-dropdown>
-            </b-navbar>
-
-            <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
-              <h3> Files </h3>
-            </div>
+          <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
+            <h3> Files </h3>
+          </div>
         </div>
 
           <div class="jobs-table">
             <div class="jobs-table-top">
               <b-row>
-                <div class="jobs-table-command pt-1 mr-auto ml-0">
-                  ${{ user.username }} crontab -l
-                </div>
+                <b-col class="m-0 mr-1 p-0 mt-2" cols="auto">
+                    <unicon name="search" fill="#bee7de" class="unicon" />
+                </b-col>
+                <b-col class="m-0 p-0" cols="auto">
+                    <b-form-input class="p-0 m-0 input-search" id="input-search" 
+                      v-model="search" type="text" 
+                      ref="username"
+                      autocomplete="false"
+                      required
+                      placeholder="Search"
+                      >
+                    </b-form-input>
+                    </b-col>
                 <div class="jobs-table-create ml-auto mr-0">
                   <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateFileModal()">
                     <unicon class="unicon" name="plus" fill="white" /> <b>FILE&nbsp;</b>
@@ -34,11 +34,14 @@
                 </div>
               </b-row>
             </div>
+
             <b-table small hover responsive sticky-header selectable 
               class="table-borderless table-scrollbar border-0" 
               select-mode="single"
               :items="listFiles"
               :fields="fields"
+              :current-page="currentPage"
+              :per-page="perPage"
               @row-selected="onRowSelect"
             >
               <template v-slot:cell(status)="data">
@@ -52,6 +55,38 @@
                 </b-button>
               </template>
             </b-table>
+            <b-row>
+              <!-- <b-col cols="auto">
+                <b-form-group
+                  label=""
+                  label-for="per-page-select"
+                  label-cols="auto"
+                  label-align-sm="right"
+                  label-size="sm"
+                  class="mb-0 text-white"
+                >
+                  <b-form-select
+                    id="per-page-select"
+                    v-model="perPage"
+                    :options="pageOptions"
+                    size="sm"
+                  ></b-form-select>
+                </b-form-group>
+              </b-col> -->
+              <b-col cols="auto" class="pt-1 mr-auto ml-3">
+                <b-pagination
+                class="pagination mb-1"
+                  v-model="currentPage"
+                  :total-rows="rows"
+                  :per-page="perPage"
+                  aria-controls="my-table"
+                  hide-goto-end-buttons
+                  size="sm"
+                  limit="1"
+                >
+                </b-pagination>
+              </b-col>
+            </b-row>
           </div>
 
         <!-- file create modal -->
@@ -96,6 +131,40 @@
             </div>
           </template>
         </b-modal>
+
+        <!-- file create modal -->
+        <b-modal centered id="update-file" title="Update File Name" size="md" @hidden="resetCreateFileModal" @ok="updateFile">
+          <b-form class="p-2" ref="updateJobForm" @submit.stop.prevent="handleUpdate">
+              
+              <div>
+                <div class="file-name-label mb-1">File Name:</div>
+                <b-form-group :state="file_state.filename" label-for="file-input" invalid-feedback="File Name is required">
+                  <b-form-input id="file-input" size="sm" v-model="file.filename" required />
+                </b-form-group>
+              </div>
+
+          </b-form>
+          <template #modal-footer>
+            <div class="w-100">
+              <div class="float-right">
+                <b-button
+                  variant="disabledbg"
+                  size="sm"
+                  @click="resetCreateFileModal"
+                >
+                  Cancel
+                </b-button>
+                <b-button
+                  variant="btn-primary"
+                  size="sm"
+                  @click="updateFile()"
+                >
+                  Update
+                </b-button>
+              </div>
+            </div>
+          </template>
+        </b-modal>
         
         <!-- alert -->
         <div>
@@ -122,10 +191,7 @@ export default {
   data() {
     return {
       show: false,
-      user: {
-        id: 6,
-        username: 'kkortiz'
-      },
+      user: JSON.parse(localStorage.user),
       list: [],
       fields: [
         {
@@ -149,6 +215,7 @@ export default {
           formatter: value => {
             return moment(value).format('MMM DD, YYYY, h:mm A')
           },
+          sortable: true,
           thClass: "thead-colorless",
           tdClass: "align-middle"
         },{
@@ -157,9 +224,16 @@ export default {
           formatter: value => {
             return value ? moment(value).format('MMM DD, YYYY, h:mm A') : ''
           },
+          sortable: true,
           thClass: "thead-colorless",
           tdClass: "align-middle"
-        }
+        },
+        // {
+        //   key: "actions",
+        //   label: "Action",
+        //   thClass: "thead-colorless",
+        //   tdClass: "align-middle"
+        // }
       ],
       job: {
         id: null,
@@ -182,6 +256,11 @@ export default {
         text: null
       },
       selectedFile: [],
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 5,
+      pageOptions: [5, 10, 15, { value: 100, text: "Show a lot" }],
+      search: "",
       
     }
   },
@@ -191,6 +270,11 @@ export default {
     ...mapGetters({
       listFiles: "Jobs/getListFiles",
     }),
+
+    rows() {
+      return this.listFiles.length
+    }
+
   },
   methods: {
     onRowSelect(data) {
@@ -246,37 +330,38 @@ export default {
       this.file = {
         id: data.id,
         filename: data.filename,
-        script: data.script,
+        script: "",
         modified_by: this.user.id, 
+        username: this.user.username
       }
 
       this.file_state = {
         filename: null,
         text: null,
       }
-      this.$bvModal.show("update-job");
+      this.$bvModal.show("update-file");
     },
     async updateFile() {
       if(!this.validation()) {
         return;
+      } else {
+        this.show = true;
+        await this.$store.dispatch("Jobs/updateFile", this.file).then(async res => {
+          if(res && res.status == 204) {
+            await this.$store.dispatch("Jobs/fetchListFiles")
+            this.job = {}
+
+            this.showAlert("Successfully Updated", "green");
+            this.$bvModal.hide("update-file");
+          } else {
+            this.showAlert("Error", "red");
+          }
+        })
+
+        this.show = false;
       }
-
-      this.show = true;
-      await this.$store.dispatch("Jobs/updateFile", this.file).then(async res => {
-        if(res && res.status == 204) {
-          await this.$store.dispatch("Jobs/fetchListFiles")
-          this.job = {}
-
-          this.showAlert("Successfully Updated", "green");
-          this.$bvModal.hide("update-file");
-        } else {
-          this.showAlert("Error", "red");
-        }
-      })
-
-      this.show = false;
     },
-    validate_file() {
+    validation() {
       if(this.file.filename == null || this.file.filename.length < 1) {
         document.getElementById("file-input").style.borderColor = "red";
         this.file_state.filename = false;
@@ -284,15 +369,8 @@ export default {
         document.getElementById("file-input").style.borderColor = "";
         this.file_state.filename = true;
       }
-      if(this.file.text == null || this.file.text.length < 1) {
-        document.getElementById("script-input").style.borderColor = "red";
-        this.file_state.text = false;
-      } else {
-        document.getElementById("script-input").style.borderColor = "";
-        this.file_state.text = true;
-      }
 
-      if(this.file.filename != null && this.file.text != null) {
+      if(this.file.filename != null) {
         return true;
       }
       

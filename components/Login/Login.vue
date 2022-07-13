@@ -16,6 +16,7 @@
                                     ref="username"
                                     autocomplete="false"
                                     @focus="resetState()"
+                                    @focusout="focusComponent()"
                                     @keyup.enter="getUser()"
                                     required>
                                 </b-form-input>
@@ -41,6 +42,7 @@
                                         v-model="user.password" type="password" 
                                         ref="password"
                                         @keyup.enter="login()"
+                                        @focusout="focusComponent()"
                                         required>
                                     </b-form-input>
                                 </b-col>
@@ -72,23 +74,23 @@ export default {
             password: ""
         },
         focus: false,
-        cred: {
-            username: ""
-        },
-        state: {
-            username: null,
-            password: null
-        },
         unameNotFound: false,
         acctNotFound: false,
+        logged: false,
     }
   },
   mounted() {
     this.$refs['username'].focus();
   },
   methods: {
+    focusComponent() {
+        if(!this.focus && !this.acctNotFound && !this.logged) {
+            this.$refs['username'].focus();
+        } else if(this.focus && !this.acctNotFound && !this.logged){
+            this.$refs['password'].focus();
+        }
+    },
     focusPassword() {
-        // this.getUser(this.user.username);
         this.focus = !this.focus;
         setTimeout(() => {
             document.getElementById("password").focus();
@@ -97,7 +99,6 @@ export default {
     },
     async getUser() {
         this.$store.dispatch("Jobs/fetchUserByUsername", this.user.username).then(res => {
-            console.log(res)
             if(res && res.data && res.data[0].id) {
                 this.focusPassword();
             } else if(res.response && res.response.status == 404){
@@ -119,9 +120,16 @@ export default {
         }
     },
     async login() {
-        this.$store.dispatch("Jobs/login", this.user).then(res => {
-            console.log(res.data);
-            if(res.response && res.response.status == 404) {
+        this.logged = true;
+        await this.$store.dispatch("Jobs/login", this.user).then(res => {
+            console.log(res);
+            if(res && res.data){
+                localStorage.setItem("user", JSON.stringify(res.data));
+                this.$router.push({
+                    path: '/jobs/',
+                    props: res.data
+                });
+            }else if(res.response && res.response.status == 404) {
                 this.acctNotFound = true;
                 document.getElementById("password").blur();
                 setTimeout(() => {
@@ -130,14 +138,6 @@ export default {
                     this.$refs['username'].focus();
                     this.focus = false;
                 }, 3000);
-            } else if(res && res.data){
-                console.log("hello?");
-                // let route = this.$router.resolve({ path: '/jobs/', params: { user: res.data }})
-                // window.open(route.href);
-                this.$router.push({
-                    path: '/jobs/',
-                    props: res.data
-                });
             }
         })
     },

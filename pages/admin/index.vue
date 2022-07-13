@@ -5,7 +5,7 @@
           <b-col cols="12" lg="2" md="2" sm="0" class="sidebar m-0 p-0">
             <Sidebar />
           </b-col>
-          <b-col class="content">
+          <b-col class="content m-0 p-0">
             <Admin />
           </b-col>
         </b-row>

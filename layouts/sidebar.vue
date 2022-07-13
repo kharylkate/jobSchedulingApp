@@ -36,7 +36,7 @@ export default {
         {
           name: "Jobs",
           icon: "arrow",
-          path: "/"
+          path: "/jobs"
         }, {
           name: "File",
           icon: "file-alt",

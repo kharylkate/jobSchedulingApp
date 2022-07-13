@@ -3,17 +3,7 @@
         <div class="main-content">
             <b-overlay :show="show">
                 <div class="header">
-                    <b-navbar toggleable="lg" type="dark">
-                        <b-nav-form>
-                            <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-                            <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-                        </b-nav-form>
-
-                        <b-dropdown class="ml-auto" right>
-                            <b-dropdown-item href="#">Profile</b-dropdown-item>
-                            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
-                        </b-dropdown>
-                    </b-navbar>
+                    <Navbar />
 
                     <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
                         <h3> {{ file.filename }} </h3>
@@ -65,6 +55,43 @@
                         </b-form-textarea>
                     </div>
                 </b-container>
+
+                <b-modal centered id="update-file-permission" title="Update File Permission" size="md" @ok="updatePermission">
+                    <div>
+                        <p>Your permission has been denied. Would you like to update file permission and try to update again?
+                        </p>
+                        <br>
+                        <p>The following command will be executed: 
+                            <code> chmod u+x {{ getFile.filename }} </code>
+                        </p>
+                    </div>
+                    <template #modal-footer>
+                        <div class="w-100">
+                            <div class="float-right">
+                                <b-button
+                                    variant="disabledbg"
+                                    size="sm"
+                                    @click="exit()" >
+                                    NO </b-button>
+                                <b-button
+                                    variant="btn-primary"
+                                    size="sm"
+                                    @click="updatePermission()"
+                                    > YES </b-button>
+                            </div>
+                        </div>
+                    </template>
+                </b-modal>
+
+                <!-- alert -->
+                <div>
+                <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
+                    <div class="alertborder" style="borderWidth:40px solid; borderColor:'brown'">
+                    <unicon :name="alert.color == 'green' ? 'check' : 'multiply' " :fill="alert.color"> </unicon>
+                        {{ alert.message }}
+                    </div>
+                </b-alert>
+                </div>
                 
             </b-overlay>
         </div>
@@ -98,12 +125,15 @@ export default {
             ID: this.id,
             updatedScript: "",
             doneUpdate: false,
-            user: {
-                id: 6,
-            },
+            user: JSON.parse(localStorage.user),
             autoUpdateMessage: "",
             updateIcon: true,
             showCancelButton: false,
+            alert: {
+                showAlert: 0,
+                color: "",
+                message: ""
+            },
 
         }
     },
@@ -132,33 +162,46 @@ export default {
                 clearInterval(this.intervalId);
                 await this.updateFile(false);
             } else {
+                this.updateIcon = false;
                 this.disabled = false;
                 this.intervalId = await setInterval( async() => {
                     await this.updateFile(true);
+                    // 1 minute interval
                 }, 60000)
                 
             }
         },
         async updateFile(interval) {
             this.updateIcon = (this.updateIcon ? false : true);
-            this.autoUpdateMessage = (interval ? 'Work is aut-saved' : 'Work has been saved!');
+            this.autoUpdateMessage = (interval ? 'Work is auto-saved' : 'Work has been saved!');
             let data = {
                 id: this.getFile.id,
                 filename: this.getFile.filename,
                 script: this.updatedScript,
-                modified_by: this.user .id,
+                modified_by: this.user.id,
+                username: this.user.username
             }
+            console.log("this.user.username", this.user.username);
             this.$store.dispatch("Jobs/updateFile", data).then(res => {
-                if(res.data.rowCount) {
+                console.log(res);
+                if(res && res.data && res.data.rowCount && res.status == 201) {
                     this.doneUpdate = true;
                     setTimeout(() => {
                         this.doneUpdate = false;
                     }, 5000)
+                } else {
+
+                    if(res.response.data.errorMsg.includes('Permission denied')) {
+                        this.$bvModal.show('update-file-permission');
+                    } else {
+                        this.showAlert("Error", "red");
+                    }
                 }
             })
         },
         async getFileById(id) {
             await this.$store.dispatch("Jobs/fetchFileById", id).then(res => {
+                console.log(res);
                 this.file = res;
             })
         },
@@ -167,6 +210,33 @@ export default {
             this.disabled = true;
             
         },
+        async updatePermission() {
+            this.$bvModal.hide('update-file-permission');
+            console.log(this.user);
+            await this.$store.dispatch("Jobs/runCommand", { 
+                action: 'permission-add',
+                filename: this.getFile.filename,
+                executed_by: this.user.id,
+                username: this.user.username,
+            }).then( async res => {
+                console.log(res);
+                if(res.stdout == "" && res.stderr == "") {
+                    await this.updateFile();
+                } else {
+                    this.showAlert(res.stderr, "red")
+                }
+            })
+        },
+        showAlert(message, color) {
+            this.alert = {
+                showAlert: 3,
+                message,
+                color
+            }
+        },
+        exit() {
+            this.$bvModal.hide('update-file-permission');
+        }
         
     },
     async beforeCreate() {

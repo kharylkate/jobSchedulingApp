@@ -174,6 +174,7 @@ export default {
                 filename: data.filename,
                 script: data.script,
                 modified_by: data.modified_by,
+                username: data.username,
             },
         }).then( async res => {
             console.log(res)
