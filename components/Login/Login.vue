@@ -126,7 +126,7 @@ export default {
             if(res && res.data){
                 localStorage.setItem("user", JSON.stringify(res.data));
                 this.$router.push({
-                    path: '/jobs/',
+                    path: '/dashboard',
                     props: res.data
                 });
             }else if(res.response && res.response.status == 404) {

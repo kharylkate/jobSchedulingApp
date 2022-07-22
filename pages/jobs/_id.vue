@@ -6,7 +6,7 @@
                 <Sidebar />
             </b-col>
             <b-col class="content m-0 p-0">
-                <JobById :job="job" :nextTriggerDates="nextTriggerDates" />
+                <JobById :job="job" :id="parseInt(this.$route.params.id)" :nextTriggerDates="nextTriggerDates" />
             </b-col>
             </b-row>
         </b-container>
@@ -38,6 +38,7 @@ export default {
     computed: {
     },
     async created() {
+        console.log(this.$route)
     },
     methods: {
         async fetchInitData() {

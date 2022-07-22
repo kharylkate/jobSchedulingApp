@@ -1,3 +1,22 @@
 .jobs-description-container {
     font-size: 15px;
 }
+
+.jobs-counter, .jobs-running, .jobs-status, .jobs-scheduled {
+    background-color: #1c8a74;
+    border-radius: 2px;
+}
+
+.script-textarea:disabled {
+    background-color: #1c8a74;
+    font-size: 13px;
+    color: whitesmoke;
+    width: 100%;
+}
+
+pre code.hljs {
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    height: 100%;
+    overflow-wrap: break-word !important;
+}

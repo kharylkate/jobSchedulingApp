@@ -1,159 +1,159 @@
 <template>
   <div>
     <div class="main-content p-0 m-0">
-      <b-overlay :show="show">
-        <div class="header">
-          <Navbar />
-          <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
-            <h3> Jobs </h3>
-          </div>
+      <div class="header">
+        <Navbar />
+        <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
+          <h3> Jobs </h3>
         </div>
+      </div>
 
-          <div class="jobs-table">
-            <div class="jobs-table-top">
-              <b-row>
-                <div class="jobs-table-command pt-1 mr-auto ml-0">
-                  <!-- ${{ user.username }} crontab -l -->
-                  <b-form-input class="p-0 m-0 input-search" id="input-search" 
-                    v-model="search" type="text" 
-                    ref="username"
-                    autocomplete="false"
-                    required>
-                  </b-form-input>
-                </div>
-                
-                <div class="jobs-table-create ml-auto mr-0">
-                  &nbsp;&nbsp;
-                  <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateJobModal()">
-                    <unicon class="unicon" name="plus" fill="white" /> <b>JOB&nbsp;</b>
-                  </b-button>
-                </div>
-              </b-row>
-            </div>
-            <b-table small hover responsive sticky-header selectable 
-              class="table-borderless border-0" 
-              select-mode="single"
-              :items="listJobs"
-              :fields="fields"
-              @row-selected="onRowSelect"
-            >
-              <template v-slot:cell(status)="data">
-                <b-badge v-if="(data.item.status)" variant="secondary">ENABLED</b-badge>
-                <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
-              </template>
-              <template v-slot:cell(actions)="data">
-                <b-button class="btn-update-script px-1 py-1" size="sm" v-if="(data.item.script !== null || data.item.script !== '')" @click="showUpdateJobModal(data.item)">
-                    &nbsp; <unicon class="icon-update-script" name="pen" fill="white"></unicon>
-                    Update&nbsp;&nbsp;
-                </b-button>
-              </template>
-            </b-table>
-          </div>
-
-        <!-- job create modal -->
-        <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
-          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
-            :state="state.name" label-for="name-input" invalid-feedback="Name is required">
-              <b-form-input id="name-input" size="sm" v-model="job.name" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
-              label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
-              <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
-              :state="state.command" label-for="command-input" invalid-feedback="Command is required">
-              <b-form-input id="command-input" size="sm" v-model="job.command" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
-              label-for="status-input" :state="state.status" invalid-feedback="Status is required">
-              <b-form-radio-group id="status-input" class="pt-2"
-                :options="[{ text: 'Enabled', value: true}, { text: 'Disabled', value: false }]" v-model="job.status" required/>
-            </b-form-group>
-          </form>
-          <template #modal-footer>
-            <div class="w-100">
-              <div class="float-right">
-                <b-button
-                  variant="disabledbg"
-                  size="sm"
-                  @click="resetCreateJobModal"
-                >
-                  Cancel
-                </b-button>
-                <b-button
-                  variant="btn-primary"
-                  size="sm"
-                  @click="createJob()"
-                >
-                  Create
+        <div class="jobs-table">
+          <div class="jobs-table-top">
+            <b-row>
+              <div class="jobs-table-command pt-1 mr-auto ml-0">
+                <!-- ${{ user.username }} crontab -l -->
+                <b-form-input class="p-0 m-0 input-search" id="input-search" 
+                  v-model="search" type="text" 
+                  ref="username"
+                  autocomplete="false"
+                  required>
+                </b-form-input>
+              </div>
+              
+              <div class="jobs-table-create ml-auto mr-0">
+                &nbsp;&nbsp;
+                <b-button class="btn-create-job" variant="font-primary" size="sm" @click="showCreateJobModal()">
+                  <unicon class="unicon" name="plus" fill="white" /> <b>JOB&nbsp;</b>
                 </b-button>
               </div>
-            </div>
-          </template>
-        </b-modal>
-
-        <!-- job update modal -->
-        <b-modal centered id="update-job" title="Update Job" @hidden="resetCreateJobModal" @ok="updateJob">
-          <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
-            :state="state.name" label-for="name-input" invalid-feedback="Name is required">
-              <b-form-input id="name-input" size="sm" v-model="job.name" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
-              label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
-              <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
-              :state="state.command" label-for="command-input" invalid-feedback="Command is required">
-              <b-form-input id="command-input" size="sm" v-model="job.command" required />
-            </b-form-group>
-
-            <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
-              label-for="status-input" :state="state.status" invalid-feedback="Status is required">
-              <b-form-radio-group id="status-input" class="pt-2"
-                :options="[{ text: 'Enabled', value: true}, { text: 'Disabled', value: false }]" v-model="job.status" required/>
-            </b-form-group>
-          </form>
-          <template #modal-footer>
-            <div class="w-100">
-              <!-- <p class="float-left">Modal Footer Content</p> -->
-              <div class="float-right">
-                <b-button
-                  variant="disabledbg"
-                  size="sm"
-                  @click="resetCreateJobModal"
-                >
-                  Cancel
-                </b-button>
-                <b-button
-                  variant="btn-primary"
-                  size="sm"
-                  @click="updateJob(state.id)"
-                >
-                  Update
-                </b-button>
-              </div>
-            </div>
-          </template>
-        </b-modal>
-
-        <!-- alert -->
-        <div>
-          <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
-            <div class="alertborder" style="borderWidth:40px solid; borderColor:'brown'">
-              <unicon :name="alert.color == 'green' ? 'check' : 'multiply' " :fill="alert.color"> </unicon>
-                {{ alert.message }}
-            </div>
-          </b-alert>
+            </b-row>
+          </div>
+          <b-table small hover responsive sticky-header selectable 
+            class="table-borderless border-0" 
+            select-mode="single"
+            :items="listJobs"
+            :fields="fields"
+            @row-selected="onRowSelect"
+          >
+            <template v-slot:cell(status)="data">
+              <b-badge v-if="(data.item.status)" variant="secondary">ENABLED</b-badge>
+              <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
+            </template>
+            <template v-slot:cell(actions)="data">
+              <b-button class="btn-update-script px-1 py-1" size="sm" v-if="(data.item.script !== null || data.item.script !== '')" @click="showUpdateJobModal(data.item)">
+                  &nbsp; <unicon class="icon-update-script" name="pen" fill="white"></unicon>
+                  Update&nbsp;&nbsp;
+              </b-button>
+            </template>
+          </b-table>
         </div>
+
+      <!-- job create modal -->
+      <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
+        <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
+          :state="state.name" label-for="name-input" invalid-feedback="Name is required">
+            <b-form-input id="name-input" size="sm" v-model="job.name" required />
+          </b-form-group>
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
+            label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
+            <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
+          </b-form-group>
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
+            :state="state.command" label-for="command-input" invalid-feedback="Command is required">
+            <b-form-input id="command-input" size="sm" v-model="job.command" required />
+          </b-form-group>
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
+            label-for="status-input" :state="state.status" invalid-feedback="Status is required">
+            <b-form-radio-group id="status-input" class="pt-2"
+              :options="[{ text: 'Enabled', value: true}, { text: 'Disabled', value: false }]" v-model="job.status" required/>
+          </b-form-group>
+        </form>
+        <template #modal-footer>
+          <div class="w-100">
+            <div class="float-right">
+              <b-button
+                variant="disabledbg"
+                size="sm"
+                @click="resetCreateJobModal"
+              >
+                Cancel
+              </b-button>
+              <b-button
+                variant="btn-primary"
+                size="sm"
+                @click="createJob()"
+              >
+                Create
+              </b-button>
+            </div>
+          </div>
+        </template>
+      </b-modal>
+
+      <!-- job update modal -->
+      <b-modal centered id="update-job" title="Update Job" @hidden="resetCreateJobModal" @ok="updateJob">
+        <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
+          :state="state.name" label-for="name-input" invalid-feedback="Name is required">
+            <b-form-input id="name-input" size="sm" v-model="job.name" required />
+          </b-form-group>
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Schedule" 
+            label-for="sched-input" :state="state.schedule" invalid-feedback="Schedule is required">
+            <b-form-input id="sched-input" size="sm" v-model="job.schedule" required />
+          </b-form-group>
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Command" 
+            :state="state.command" label-for="command-input" invalid-feedback="Command is required">
+            <b-form-input id="command-input" size="sm" v-model="job.command" required />
+          </b-form-group>
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Status" 
+            label-for="status-input" :state="state.status" invalid-feedback="Status is required">
+            <b-form-radio-group id="status-input" class="pt-2"
+              :options="[{ text: 'Enabled', value: true}, { text: 'Disabled', value: false }]" v-model="job.status" required/>
+          </b-form-group>
+        </form>
+        <template #modal-footer>
+          <div class="w-100">
+            <!-- <p class="float-left">Modal Footer Content</p> -->
+            <div class="float-right">
+              <b-button
+                variant="disabledbg"
+                size="sm"
+                @click="resetCreateJobModal"
+              >
+                Cancel
+              </b-button>
+              <b-button
+                variant="btn-primary"
+                size="sm"
+                @click="updateJob(state.id)"
+              >
+                Update
+              </b-button>
+            </div>
+          </div>
+        </template>
+      </b-modal>
+
+      <!-- alert -->
+      <div>
+        <b-alert class="alerticon" v-model="alert.showAlert" variant="light">
+          <div class="alertborder" style="borderWidth:40px solid; borderColor:'brown'">
+            <unicon :name="alert.color == 'green' ? 'check' : 'multiply' " :fill="alert.color"> </unicon>
+              {{ alert.message }}
+          </div>
+        </b-alert>
+      </div>
+      <b-overlay :show="show" no-wrap fixed>
       </b-overlay>
     </div>
   </div>

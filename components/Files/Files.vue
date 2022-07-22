@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="main-content p-0 m-0">
-      <b-overlay :show="show">
         <div class="header">
           <Navbar />
 
@@ -175,6 +174,7 @@
             </div>
           </b-alert>
         </div>
+      <b-overlay :show="show" no-wrap fixed>
       </b-overlay>
     </div>
   </div>
@@ -306,9 +306,9 @@ export default {
       this.$bvModal.hide("create-new-file");
     },
     async createFile() {
-      if(!this.validate_file()) {
-        return;
-      }
+      // if(!this.validate_file()) {
+      //   return;
+      // }
       this.$bvModal.hide("create-new-file");
       this.show = true;
       await this.$store.dispatch("Jobs/createFile", this.file).then(async res => {
@@ -342,9 +342,9 @@ export default {
       this.$bvModal.show("update-file");
     },
     async updateFile() {
-      if(!this.validation()) {
-        return;
-      } else {
+      // if(!this.validation()) {
+      //   return;
+      // } else {
         this.show = true;
         await this.$store.dispatch("Jobs/updateFile", this.file).then(async res => {
           if(res && res.status == 204) {
@@ -359,7 +359,7 @@ export default {
         })
 
         this.show = false;
-      }
+      // }
     },
     validation() {
       if(this.file.filename == null || this.file.filename.length < 1) {

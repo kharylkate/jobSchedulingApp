@@ -45,7 +45,8 @@ export default {
           name: "Admin",
           icon: "lock-access",
           path: "/admin"
-        }
+        },
+
       ]
     }
   },

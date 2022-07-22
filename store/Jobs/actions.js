@@ -20,6 +20,8 @@ export default {
 
     async fetchJobById({ commit }, data) {
         const id = parseInt(data.id);
+        console.log(id);
+
         return await axios({
             method: "GET",
             url: `${this.$axios.defaults.baseURL}/jobs/${id}`
@@ -93,12 +95,16 @@ export default {
             data: data,
         }).then(res => {
             console.log(res);
-            switch (data.action) {
-                case 'cron-read-log-specific-lastlines':
-                    console.log("cron read log");
-                    commit("cronReadLogSpecific", (res.data));
-
-            }
+            // switch (data.action) {
+            //     case 'cron-read-log-specific-lastlines':
+            //         console.log("cron read log");
+            //         commit("cronReadLogSpecific", (res.data));
+            //         break;
+            //     case 'cron-read-status': {
+            //         commit("cronReadStatus", res.data)
+            //         break;
+            //     }
+            // }
             return res.data;
 
         })
