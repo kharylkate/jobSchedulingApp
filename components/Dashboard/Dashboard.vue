@@ -8,40 +8,38 @@
         </div>
       </div>
 
-      <b-container fluid class="p-0 m-0 bords">
+      <b-container fluid class="p-0 m-0">
         <b-row class="m-0 p-0">
-          <b-col cols="3" class="bords p-0 mr-3" style="height: 200px;">
-            <v-card
-              class="mx-auto"
-              max-width="300"
-              tile
-            >
-              <v-list dense>
-                <v-subheader>REPORTS</v-subheader>
-                <v-list-item-group
-                  v-model="server"
-                  color="primary"
-                >
-                  <v-list-item
-                    v-for="(item, i) in server"
-                    :key="i"
-                  >
-                    <v-list-item-icon>
-                      <v-icon v-text="item.icon"></v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title v-text="item.text"></v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
+          <!-- {{ listServers }} -->
+          <b-col cols="3" class="text-white server-div p-1 mr-3">
+            <h4 class="pl-2">Servers</h4>
+            <h6 class="pl-2 pt-0 mt-0" style="font-weight: 300">Show servers with cron jobs</h6>
+
+            <div class="pl-2">
+              <button class="server-filter-button">
+                hello
+              </button>
+            </div>
+
+            <b-card class="m-1 p-4 mb-2 server-card" v-for="(server, id) in listServers" :key="id" bg-variant="dark" text-variant="white">
+              <b-card-text>
+                <h5 class="d-flex justify-content-between align-items-center">
+                  {{ server.name}}
+                  <unicon class="unicon" name="check-circle" fill="#1c8a74" />
+                </h5>
+                <h5> {{ server.host }} </h5>
+                Main PID: 3159 (cron) <br> Tasks: 1 (limit: 4195) <br><br> Running since Wed 2022-07-08 14:09:52 PST
+              </b-card-text>
+              
+            </b-card>
+              
+            
           </b-col>
           <b-col class="bords p-0 ml-3" style="height: 100px;"></b-col>
         </b-row>
       </b-container>
 
-      <b-container fluid class="p-5">
+      <!-- <b-container fluid class="p-5">
         <b-row>
           <b-col xl="5">
             <b-row class="jobs-counter mb-5 p-4" style="padding-left: 10px; margin-left:20px;">
@@ -80,15 +78,15 @@
             </b-row>
           </b-col>
         </b-row>
-      </b-container>
+      </b-container> -->
 
-        <div class="jobs-table">
+        <!-- <div class="jobs-table">
           <div class="jobs-table-top">
             <b-row>
               
             </b-row>
           </div>
-        </div>
+        </div> -->
 
       <!-- alert -->
       <div>
@@ -123,6 +121,7 @@ export default {
       show: false,
       user: JSON.parse(localStorage.user),
       cronstatus: "",
+      serverCronStatus: [],
       codeJs: `● cron.service - Regular background program processing daemon
    Loaded: loaded (/lib/systemd/system/cron.service; enabled; vendor preset: enabled)
    Active: active (running) since Wed 2022-07-06 14:09:52 PST; 2 weeks 1 days ago
@@ -149,11 +148,13 @@ export default {
     }
   },
   async created(){
-    this.runCommand();
+    // this.runCommand();
+    // this.cronReadtStatus();
   },
   computed: {
     ...mapGetters({
       listJobs: "Jobs/getListJobs",
+      listServers: "Server/getListServer",
     }),
 
     formatStatusCron() {
@@ -162,17 +163,29 @@ export default {
 
   },
   methods: {
-    async runCommand() {
-      let data = {
-        action: "cron-read-status",
-        executed_by: this.user.id,
-        username: this.user.username
-      }
-      await this.$store.dispatch("Jobs/runCommand", data).then( (res) => {
-        console.log(res);
-        this.cronstatus = (res && res.stderr == '', res.stdout != '') ? res.stdout : (res && res.stdout == '' && res.stderr != '') ? res.stderr : ''
+    // async runCommand() {
+    //   this.serverCronStatus = this.listServers;
+    //   let data = {
+    //     action: "cron-read-status",
+    //     executed_by: this.user.id,
+    //     username: this.user.username
+    //   }
+    //   await this.$store.dispatch("Jobs/runCommand", data).then( (res) => {
+    //     console.log(res);
+    //     this.cronstatus = (res && res.stderr == '', res.stdout != '') ? res.stdout : (res && res.stdout == '' && res.stderr != '') ? res.stderr : ''
+    //   })
+    //   console.log(JSON.stringify(this.cronstatus));
+    // },
+
+    async cronReadtStatus(server) {
+      await this.$store.dispatch("Server/cronReadStatus", {
+        server,
+        username: this.user.username,
+        privateKey: this.user.private_key,
       })
-      console.log(JSON.stringify(this.cronstatus));
+      // .then(res => {
+      //   console.log(res);
+      // })
     },
     
     
@@ -186,7 +199,10 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Jobs/fetchListJobs");
+    await this.$store.dispatch("Server/fetchListServer").then(res => {
+      // console.log(res.data);
+      this.cronReadtStatus(res.data);
+    });
   },
   
 }
