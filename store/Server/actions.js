@@ -1,7 +1,7 @@
 import axios from 'axios';
 export default {
     
-    async fetchListServer({ commit}, data ) {
+    async fetchListServer({ commit }) {
         return await axios({
             method: "GET",
             url: `${this.$axios.defaults.baseURL}/server`,
@@ -14,7 +14,7 @@ export default {
             } else {
                 commit("setListServer", []);
             }
-            // console.log(res)
+            console.log(res)
             return res;
         })
     },
@@ -24,18 +24,18 @@ export default {
         return await axios({
             method: "POST",
             url: `${this.$axios.defaults.baseURL}/cron/status`,
-            // headers: {
-            //     "Content-Type": "application/json"
-            // },
+            headers: {
+                "Content-Type": "application/json"
+            },
             data: data,
         }).then( async res => {
             console.log(res);
-            // if(Array.isArray(res.data)) {
-            //     commit("setListServer", res.data);
-            // } else {
-            //     commit("setListServer", []);
-            // }
-            // console.log(res)
+            if(Array.isArray(res.data)) {
+                commit("setListServer", res.data);
+            } else {
+                commit("setListServer", []);
+            }
+            console.log(res)
         })
     }
 }

@@ -14,10 +14,10 @@
                                 <b-form-input class="p-0 m-0" id="username" 
                                     v-model="user.username" type="text" 
                                     ref="username"
-                                    autocomplete="false"
                                     @focus="resetState()"
                                     @focusout="focusComponent()"
                                     @keyup.enter="getUser()"
+                                    autocomplete="off"
                                     required>
                                 </b-form-input>
                             </b-col>

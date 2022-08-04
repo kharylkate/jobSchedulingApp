@@ -18,4 +18,8 @@ export default {
     getFileById(state) {
         return state.fileById;
     },
+
+    getListScheduledTasks(state) {
+        return state.listScheduledTasks;
+    }
 }

@@ -4,6 +4,8 @@ export default () => ({
     cronTail: {},
     listFiles: [],
     fileById: {},
+    listScheduledTasks: [],
+    
     // listJobs: [
     //     {
     //         id: '1',

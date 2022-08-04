@@ -37,7 +37,7 @@
             @row-selected="onRowSelect"
           >
             <template v-slot:cell(status)="data">
-              <b-badge v-if="(data.item.status)" variant="secondary">ENABLED</b-badge>
+              <b-badge v-if="(data.item.status)" variant="btn-secondary">ENABLED</b-badge>
               <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
             </template>
             <template v-slot:cell(actions)="data">
@@ -52,6 +52,13 @@
       <!-- job create modal -->
       <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
         <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Same" 
+          :state="state.server" label-for="server-input" invalid-feedback="Server is required">
+            <b-form-select id="server-input" size="sm" 
+            :options="(optionServers)"
+            v-model="job.server" required />
+          </b-form-group>
 
           <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
           :state="state.name" label-for="name-input" invalid-feedback="Name is required">
@@ -99,6 +106,11 @@
       <!-- job update modal -->
       <b-modal centered id="update-job" title="Update Job" @hidden="resetCreateJobModal" @ok="updateJob">
         <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
+
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
+          :state="state.server" label-for="name-input" invalid-feedback="Name is required">
+            <b-form-select id="server-input" size="sm" v-model="job.server" required />
+          </b-form-group>
 
           <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
           :state="state.name" label-for="name-input" invalid-feedback="Name is required">
@@ -171,7 +183,14 @@ export default {
       show: false,
       user: JSON.parse(localStorage.user),
       list: [],
+      optionServers: [],
       fields: [
+        {
+          key: "server_name",
+          label: "Server",
+          thClass: "thead-colorless",
+          tdClass: "align-middle"
+        },
         {
           key: "name",
           label: "Name",
@@ -237,6 +256,7 @@ export default {
   computed: {
     ...mapGetters({
       listJobs: "Jobs/getListJobs",
+      listServers: "Server/getListServers",
     }),
 
     cronToString(schedule) {
@@ -380,6 +400,14 @@ export default {
   },
   async beforeCreate() {
     await this.$store.dispatch("Jobs/fetchListJobs");
+    await this.$store.dispatch("Server/fetchListServer").then(res => {
+      (res && res.data) ? (
+        this.optionServers.push({ text: "Please select an option", value: null }),
+        this.optionServers = res.data.map(element => {
+        return { text: element.name, value: element.host}
+      })) : 
+      { text: "There are no servers available", value: null };
+    })
   },
   
 }

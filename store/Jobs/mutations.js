@@ -63,5 +63,9 @@ export default {
         state.listFiles[ind] = data;
         console.log(state.listFiles[ind]);
         return state.listFiles[ind];
+    },
+
+    setScheduledTask(state, data) {
+        state.listScheduledTasks = data;
     }
 }

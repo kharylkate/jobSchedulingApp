@@ -44,7 +44,7 @@
               @row-selected="onRowSelect"
             >
               <template v-slot:cell(status)="data">
-                <b-badge v-if="(data.item.status)" variant="secondary">ENABLED</b-badge>
+                <b-badge v-if="(data.item.status)" variant="btn-secondary">ENABLED</b-badge>
                 <b-badge v-else variant="disabledbg" style="color: white">DISABLED</b-badge>
               </template>
               <template v-slot:cell(actions)="data">

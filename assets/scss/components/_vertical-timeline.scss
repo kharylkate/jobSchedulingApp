@@ -1,60 +1,98 @@
 .timeline {
-    list-style: none;
-  }
+  list-style: none;
+}
+.timeline > li {
+  margin-bottom: 60px;
+}
+
+/* for Desktop */
+@media ( min-width : 300px ){
   .timeline > li {
-    // margin-bottom: 60px;
+    overflow: hidden;
+    margin: 0;
+    position: relative;
   }
+  .timeline-date {
+    width: 110px;
+    float: left;
+    margin-top: 20px;
+  }
+  .timeline-content {
+    width: 75%;
+    float: left;
+    border-left: 3px #7f7f7f solid;
+    padding-left: 30px;
+  }
+  .timeline-content:before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #1c8a74;
+    position: absolute;
+    left: 106px;
+    top: 24px;
+    border-radius: 100%;
+  }
+}
 
-  .job-schedules {
-    color: white;
-    font-size: 14px;
-    font-weight: 500;
-  }
+
+// .timeline {
+//     list-style: none;
+//   }
+//   .timeline > li {
+//     // margin-bottom: 60px;
+//   }
+
+//   .job-schedules {
+//     color: white;
+//     font-size: 14px;
+//     font-weight: 500;
+//   }
   
-  /* for Desktop */
-  @media ( min-width : 300px ){
-    .timeline > li {
-      overflow: hidden;
-      margin: 0;
-      position: relative;
-    }
-    .timeline-date {
-      width: 10px;
-      float: left;
-      margin-top: 20px;
-    }
-    .timeline-content {
-      width: 85%;
-      float: left;
-      border-left: 2px #78A87F solid;
-      padding-left: 30px;
-    }
-    .timeline-content:before {
-      content: '';
-      width: 12px;
-      height: 12px;
-      background: white;
-      position: absolute;
-    //   left: 106px;
-      left: 5px;
-      top: 15px;
-      border-radius: 100%;
-    }
-  }
+//   /* for Desktop */
+//   @media ( min-width : 300px ){
+//     .timeline > li {
+//       overflow: hidden;
+//       margin: 0;
+//       position: relative;
+//     }
+//     .timeline-date {
+//       width: 10px;
+//       float: left;
+//       margin-top: 20px;
+//     }
+//     .timeline-content {
+//       width: 85%;
+//       float: left;
+//       border-left: 2px #78A87F solid;
+//       padding-left: 30px;
+//     }
+//     .timeline-content:before {
+//       content: '';
+//       width: 12px;
+//       height: 12px;
+//       background: white;
+//       position: absolute;
+//     //   left: 106px;
+//       left: 5px;
+//       top: 15px;
+//       border-radius: 100%;
+//     }
+//   }
 
-  @media (max-width: 472px) {
-      .job-schedules {
-          display: none;
-      }
-  }
+//   @media (max-width: 472px) {
+//       .job-schedules {
+//           display: none;
+//       }
+//   }
 
-  .log-script {
-      font-size: 15px;
-      background-color: #1e917a;
-      color: white;
-      font-weight: 500;
-  }
+//   .log-script {
+//       font-size: 15px;
+//       background-color: #1e917a;
+//       color: white;
+//       font-weight: 500;
+//   }
 
-  .job-info-text {
-    padding: 5px;
-  }
+//   .job-info-text {
+//     padding: 5px;
+//   }

@@ -6,7 +6,7 @@
             <Sidebar />
           </b-col>
           <b-col class="content m-0 p-0">
-            <Files />
+            <Roles />
           </b-col>
         </b-row>
       </b-container>
@@ -14,10 +14,14 @@
 </template>
 
 <script>
-import Sidebar from '../../layouts/sidebar.vue';
+import Sidebar from '../../../layouts/sidebar.vue'
+import Roles from '../../../components/Admin/Roles/Roles.vue'
 export default {
-    name: "IndexPage",
-    // layout: "sidebar",
-    components: { Sidebar }
+  name: 'IndexPage',
+  // layout: 'sidebar',
+  components: { 
+    Sidebar,
+    Roles,
+  }
 }
 </script>

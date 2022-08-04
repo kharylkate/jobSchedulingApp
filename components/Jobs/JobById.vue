@@ -96,7 +96,7 @@
 
             <b-container fluid class="">
                 <b-card-header header-tag="header" role="tab">
-                    <b-button block v-b-toggle.accordion-1 variant="secondary">Logs</b-button>
+                    <b-button block v-b-toggle.accordion-1 variant="btn-secondary">Logs</b-button>
                 </b-card-header>
                 <b-collapse class="text-white" id="accordion-1" visible accodrion="accordion" role="tab-panel" >
                     <b-container fluid class="p-4 m-3 cron-logs">

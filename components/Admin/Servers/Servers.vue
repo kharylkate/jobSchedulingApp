@@ -2,14 +2,13 @@
 <template>
   <div>
     <div class="main-content p-0 m-0">
-      <b-overlay :show="show">
         <div class="header">
           <Navbar />
           <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
-            <h3> Admin </h3>
+            <h3> Servers </h3>
           </div>
         </div>
-      </b-overlay>
+      <b-overlay :show="show"></b-overlay>
     </div>
   </div>
 </template>
@@ -17,7 +16,7 @@
 <script>
 
 export default {
-  name: 'Admin',
+  name: 'Servers',
   data() {
     return {
       show: false,

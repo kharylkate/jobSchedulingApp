@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="main-content p-0 m-0">
+    <div class="main-content p-0 m-0 vh-100">
       <div class="header">
         <Navbar />
         <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
@@ -8,34 +8,60 @@
         </div>
       </div>
 
-      <b-container fluid class="p-0 m-0">
-        <b-row class="m-0 p-0">
-          <!-- {{ listServers }} -->
+      <b-container fluid class="p-0 m-0 ">
+        <b-row class="m-0 p-0 vh-100">
           <b-col cols="3" class="text-white server-div p-1 mr-3">
-            <h4 class="pl-2">Servers</h4>
+            <h4 class="pl-2 pt-2">Servers</h4>
             <h6 class="pl-2 pt-0 mt-0" style="font-weight: 300">Show servers with cron jobs</h6>
 
-            <div class="pl-2">
-              <button class="server-filter-button">
-                hello
-              </button>
+            <div class="pl-2 pb-2">
+              <b-button variant="btn-secondary" size="sm">
+                All <b-badge class="px-1 server-count text-white" variant="btn-primary">3</b-badge>
+              </b-button> &nbsp;
+              <b-button variant="dark" size="sm">
+                Active <b-badge class="px-1 server-count text-white" variant="secondary">3</b-badge>
+              </b-button> &nbsp;
+              <b-button variant="dark" size="sm">
+                Inactive <b-badge class="px-1 server-count text-white" variant="secondary">0</b-badge>
+              </b-button>
             </div>
 
-            <b-card class="m-1 p-4 mb-2 server-card" v-for="(server, id) in listServers" :key="id" bg-variant="dark" text-variant="white">
+            <b-card class="m-1 p-2 mb-2 server-card" v-for="(server, id) in listServers" :key="id" bg-variant="dark" text-variant="white">
               <b-card-text>
-                <h5 class="d-flex justify-content-between align-items-center">
+                <h6 class="d-flex justify-content-between align-items-center">
                   {{ server.name}}
                   <unicon class="unicon" name="check-circle" fill="#1c8a74" />
-                </h5>
-                <h5> {{ server.host }} </h5>
-                Main PID: 3159 (cron) <br> Tasks: 1 (limit: 4195) <br><br> Running since Wed 2022-07-08 14:09:52 PST
+                </h6>
+
+                <h6> {{ server.host }} </h6>
+
+                <p class="m-0">Main PID: 3159 (cron) <br> Tasks: 1 (limit: 4195)</p>
+                <p class="m-0 p-0">Running since Wed 2022-07-08 14:09:52 PST</p>
               </b-card-text>
               
             </b-card>
               
             
           </b-col>
-          <b-col class="bords p-0 ml-3" style="height: 100px;"></b-col>
+          <b-col class="p-0 ml-3 text-white">
+            <b-col class="job-row-info">
+                  <div class="job-schedules pt-2">
+                    <div class="pb-3 pt-2">
+                      <h5>Upcoming Tasks</h5>
+                    </div>
+                    <ul class="timeline">
+                        <li v-for="(task, index) in sortedArr" :key="index">
+                          
+                        <p class="timeline-date">{{ task.date }}</p>
+                            <div class="timeline-content">
+                              <h5>{{ task.name }}</h5>
+                                <p>{{ task.command }}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+              </b-col>
+          </b-col>
         </b-row>
       </b-container>
 
@@ -106,6 +132,9 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import cronstrue from 'cronstrue';
+import moment from 'moment';
+import parser from 'cron-parser';
 import '../../node_modules/highlight.js/styles/atom-one-dark-reasonable.css'
 
 export default {
@@ -117,6 +146,12 @@ export default {
         message: "",
         color: ""
       },
+      filter: {
+        all: true,
+        active: false,
+        inactive: false
+      },
+      sortedArr: [],
       server: ['94.237.65.245', '94.237.65.245', '94.237.65.245'],
       show: false,
       user: JSON.parse(localStorage.user),
@@ -148,12 +183,12 @@ export default {
     }
   },
   async created(){
-    // this.runCommand();
-    // this.cronReadtStatus();
+    
   },
   computed: {
     ...mapGetters({
       listJobs: "Jobs/getListJobs",
+      listScheduledTasks: "Jobs/getListScheduledTasks",
       listServers: "Server/getListServer",
     }),
 
@@ -163,29 +198,40 @@ export default {
 
   },
   methods: {
-    // async runCommand() {
-    //   this.serverCronStatus = this.listServers;
-    //   let data = {
-    //     action: "cron-read-status",
-    //     executed_by: this.user.id,
-    //     username: this.user.username
-    //   }
-    //   await this.$store.dispatch("Jobs/runCommand", data).then( (res) => {
-    //     console.log(res);
-    //     this.cronstatus = (res && res.stderr == '', res.stdout != '') ? res.stdout : (res && res.stdout == '' && res.stderr != '') ? res.stderr : ''
-    //   })
-    //   console.log(JSON.stringify(this.cronstatus));
-    // },
-
     async cronReadtStatus(server) {
       await this.$store.dispatch("Server/cronReadStatus", {
         server,
         username: this.user.username,
         privateKey: this.user.private_key,
       })
-      // .then(res => {
-      //   console.log(res);
-      // })
+
+    },
+
+    cronToHuman(sched) {
+      let arr = [];
+      sched.map((element) => {
+
+        var options = {
+          currentDate: moment().toDate(),
+          endDate: moment().add(1, 'days').toDate(),
+          iterator: true
+        }
+
+        try {
+            var interval = parser.parseExpression(element.schedule, options);
+                  let obj = interval.next();
+                  element.date  = moment(obj.value.toString()).format("MMMM DD, HH:mm")
+        } catch (err) {
+          console.log('Error: ', err.message);
+        }
+
+        arr.push(cronstrue.toString(element.schedule));
+      })
+      
+      this.sortedArr = sched.sort((a,b) => { 
+        console.log((a.date));
+        return moment(a.date).diff(moment(b.date))
+      });
     },
     
     
@@ -203,6 +249,10 @@ export default {
       // console.log(res.data);
       this.cronReadtStatus(res.data);
     });
+
+    await this.$store.dispatch("Jobs/getScheduledTasks").then(res => {
+      this.cronToHuman(res.data);
+    })
   },
   
 }

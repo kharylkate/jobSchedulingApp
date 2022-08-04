@@ -221,15 +221,34 @@ export default {
                 password: data.password
             },
         }).then( async res => {
-            console.log(res)
-            // if(res.data.length > 0 && Array.isArray(res.data)) {
-            //     await commit("setFile", data);
-            // } else {
-            //     await commit("setFile", data);
-            // }
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setFile", data);
+            } else {
+                await commit("setFile", data);
+            }
             return res;
         }).catch(err => err);
+    },
+
+    async getScheduledTasks({ commit }) {
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/cron/schedule`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then( async res => {
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setScheduledTask", res.data);
+            } else {
+                await commit("setScheduledTask", res.data);
+            }
+            return res;
+        })
     }
+
+
+
 
 
 

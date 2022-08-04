@@ -1,12 +1,12 @@
 <template>
   <div>
       <b-container fluid class="m-0 p-0">
-        <b-row class="m-0 p-0">
+        <b-row class="m-0 p-0 vh-100">
           <b-col cols="12" lg="2" md="2" sm="0" class="sidebar m-0 p-0">
             <Sidebar />
           </b-col>
           <b-col class="content m-0 p-0">
-            <Admin />
+            <Servers />
           </b-col>
         </b-row>
       </b-container>
@@ -14,10 +14,13 @@
 </template>
 
 <script>
-import Sidebar from '../../layouts/sidebar.vue'
+import Sidebar from '../../../layouts/sidebar.vue'
+import Servers from '../../../components/Admin/Servers/Servers.vue';
 export default {
   name: 'IndexPage',
-  // layout: 'sidebar',
-  components: { Sidebar }
+  components: { 
+    Sidebar,
+    Servers
+  }
 }
 </script>

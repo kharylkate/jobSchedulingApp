@@ -1,7 +1,7 @@
 <template v-if="jobDataHasLoaded">
     <div>
         <b-container fluid class="m-0 p-0">
-            <b-row class="m-0 p-0">
+            <b-row class="m-0 p-0 vh-100">
             <b-col cols="12" lg="2" md="2" sm="0" class="sidebar m-0 p-0">
                 <Sidebar />
             </b-col>
