@@ -32,6 +32,7 @@
           <b-table small hover responsive sticky-header selectable 
             class="table-borderless border-0" 
             select-mode="single"
+            show-empty
             :items="listJobs"
             :fields="fields"
             @row-selected="onRowSelect"
@@ -53,7 +54,7 @@
       <b-modal centered id="create-new-job" title="Create New Job" @hidden="resetCreateJobModal" @ok="createJob">
         <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
 
-          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Same" 
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Server" 
           :state="state.server" label-for="server-input" invalid-feedback="Server is required">
             <b-form-select id="server-input" size="sm" 
             :options="(optionServers)"
@@ -399,7 +400,8 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Jobs/fetchListJobs");
+    const { username } = JSON.parse(localStorage.user);
+    await this.$store.dispatch("Jobs/fetchListJobs", { username });
     await this.$store.dispatch("Server/fetchListServer").then(res => {
       (res && res.data) ? (
         this.optionServers.push({ text: "Please select an option", value: null }),

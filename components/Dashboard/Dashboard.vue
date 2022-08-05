@@ -52,7 +52,7 @@
                     <ul class="timeline">
                         <li v-for="(task, index) in sortedArr" :key="index">
                           
-                        <p class="timeline-date">{{ task.date }}</p>
+                        <p class="timeline-date">{{ (task.date ? task.date : 'undefined date') }}</p>
                             <div class="timeline-content">
                               <h5>{{ task.name }}</h5>
                                 <p>{{ task.command }}</p>
@@ -183,7 +183,7 @@ export default {
     }
   },
   async created(){
-    
+
   },
   computed: {
     ...mapGetters({
@@ -246,7 +246,6 @@ export default {
   },
   async beforeCreate() {
     await this.$store.dispatch("Server/fetchListServer").then(res => {
-      // console.log(res.data);
       this.cronReadtStatus(res.data);
     });
 

@@ -19,11 +19,11 @@
               <b-nav-item class="sidebar-link-item" :href="mod.path">
                 <b-row>
                   <div class="nav-icon"> <unicon :name="mod.icon" fill="white" /> </div>
-                  <div class="nav-name" v-if="mod.name != 'Admin'"> &nbsp; {{ mod.name }} </div>
+                  <div class="nav-name"> &nbsp; {{ mod.name }} </div>
                 </b-row>
               </b-nav-item>
             </b-nav>
-            <b-nav vertical class="sidebar-link">
+            <b-nav vertical class="sidebar-link" v-if="user.rolename == 'administrator'">
               <b-nav-item class="sidebar-link-item" v-b-toggle.admin-submodules>
                 <b-row>
                   <div class="nav-icon"> <unicon name="lock-access" fill="white" /> </div>
@@ -37,10 +37,7 @@
                   <b-nav-item class="sidebar-link-item pl-5" :href="mod.path">
                     <b-row>
                       <div class="nav-icon"> <unicon :name="mod.icon" fill="white" /> </div>
-                      <div class="nav-name" v-if="mod.name != 'Admin'"> &nbsp; {{ mod.name }} </div>
-                      <div class="nav-name" v-if="mod.name == 'Admin'"
-                        v-b-toggle.admin-submodules
-                      > &nbsp; {{ mod.name }} </div>
+                      <div class="nav-name"> &nbsp; {{ mod.name }} </div>
                     </b-row>
                   </b-nav-item>
                 </b-nav>
@@ -55,6 +52,7 @@
 export default {
   data() {
     return {
+      user: JSON.parse(localStorage.user),
       modules: {
         main: [
           {

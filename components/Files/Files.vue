@@ -37,6 +37,7 @@
             <b-table small hover responsive sticky-header selectable 
               class="table-borderless table-scrollbar border-0" 
               select-mode="single"
+show-empty
               :items="listFiles"
               :fields="fields"
               :current-page="currentPage"
@@ -386,7 +387,9 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Jobs/fetchListFiles")//.then(res => console.log(res));
+    const { username } = JSON.parse(localStorage.user);
+    console.log(username);
+    await this.$store.dispatch("Jobs/fetchListFiles", { username })//.then(res => console.log(res));
   },
   
 }

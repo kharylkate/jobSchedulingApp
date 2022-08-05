@@ -241,7 +241,7 @@ export default {
     },
     async beforeCreate() {
         this.show = true;
-        await this.$store.dispatch("Jobs/fetchListFiles");
+        await this.$store.dispatch("Jobs/fetchListFiles", { username: JSON.parse(localStorage.user).username });
         this.show = false;
     },
 

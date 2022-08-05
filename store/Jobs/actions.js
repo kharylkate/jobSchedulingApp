@@ -1,7 +1,7 @@
 import axios from 'axios';
 export default {
 
-    async fetchListJobs({ commit }, data) {
+    async fetchListAllJobs({ commit }) {
         return await axios({
             method: "GET",
             url: `${this.$axios.defaults.baseURL}/jobs`,
@@ -18,9 +18,26 @@ export default {
         }).catch(err => err);
     },
 
+    async fetchListJobs({ commit }, data) {
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/jobs`,
+            headers: {
+                "Content-Type": "application/json, text/plain, */*"
+            },
+            data: { username: data.username }
+        }).then( async res => {
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setListJobs", res.data);
+            } else {
+                await commit("setListJobs", []);
+            }
+            return res;
+        }).catch(err => err);
+    },
+
     async fetchJobById({ commit }, data) {
         const id = parseInt(data.id);
-        console.log(id);
 
         return await axios({
             method: "GET",
@@ -53,9 +70,9 @@ export default {
             },
         }).then( async res => {
             if(res.data.length > 0 && Array.isArray(res.data)) {
-                await commit("setListJobs", data);
+                await commit("createJob", data);
             } else {
-                await commit("setListJobs", data);
+                await commit("createJob", data);
             }
             return res;
         }).catch(err => err);
@@ -110,14 +127,36 @@ export default {
         })
     },
 
-    async fetchListFiles({ commit }, data) {
+    async fetchListAllFiles({ commit }) {
         return await axios({
-            method: "GET",
+            method: "POST",
             url: `${this.$axios.defaults.baseURL}/files`,
             headers: {
-                "Content-Type": "application/json, text/plain, */*"
+                "Content-Type": "application/json"
+            },
+        }).then( async res => { 
+            console.log(res);           
+            if(res.data.length > 0 && Array.isArray(res.data)) {
+                await commit("setListFiles", res.data);
+            } else {
+                await commit("setListFiles", []);
             }
-        }).then( async res => {            
+            return res;
+        }).catch(err => err);
+    },
+
+    async fetchListFiles({ commit }, data) {
+        console.log("hello?????",data.username);
+        return await axios({
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/files`,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: { username: data.username }
+            
+        }).then( async res => { 
+            console.log(res);           
             if(res.data.length > 0 && Array.isArray(res.data)) {
                 await commit("setListFiles", res.data);
             } else {
