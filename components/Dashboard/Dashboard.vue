@@ -26,7 +26,7 @@
               </b-button>
             </div>
 
-            <b-card class="m-1 p-2 mb-2 server-card" v-for="(server, id) in listServers" :key="id" bg-variant="dark" text-variant="white">
+            <b-card class="m-1 p-2 mb-2 server-card" v-for="(server, id) in serverCronStatus" :key="id" bg-variant="dark" text-variant="white" @click="selectServer(server)">
               <b-card-text>
                 <h6 class="d-flex justify-content-between align-items-center">
                   {{ server.name}}
@@ -34,34 +34,61 @@
                 </h6>
 
                 <h6> {{ server.host }} </h6>
+                <!-- {{ server.status.stdout }} -->
 
-                <p class="m-0">Main PID: 3159 (cron) <br> Tasks: 1 (limit: 4195)</p>
-                <p class="m-0 p-0">Running since Wed 2022-07-08 14:09:52 PST</p>
+                <!-- <div class="m-0 p-0" v-for="(el, id) in server.status" :key="id"> -->
+                  <!-- <p class="m-0">Main PID: 3159 (cron) <br> Tasks: 1 (limit: 4195)</p> -->
+                  <p class="m-0">{{ server.status.stdout[4] }}<br> {{ server.status.stdout[5] }}</p>
+                  <p class="m-0 p-0">{{ server.status.stdout[2] }}</p>
+                  <!-- <p class="m-0 p-0">Running since Wed 2022-07-08 14:09:52 PST</p> -->
+                <!-- </div> -->
               </b-card-text>
               
             </b-card>
               
             
           </b-col>
-          <b-col class="p-0 ml-3 text-white">
-            <b-col class="job-row-info">
-                  <div class="job-schedules pt-2">
-                    <div class="pb-3 pt-2">
-                      <h5>Upcoming Tasks</h5>
-                    </div>
-                    <ul class="timeline">
-                        <li v-for="(task, index) in sortedArr" :key="index">
-                          
-                        <p class="timeline-date">{{ (task.date ? task.date : 'undefined date') }}</p>
-                            <div class="timeline-content">
-                              <h5>{{ task.name }}</h5>
-                                <p>{{ task.command }}</p>
-                            </div>
-                        </li>
-                    </ul>
+          <b-col class="job-row-info text-white">
+            <b-row>
+              
+            </b-row>
+            <b-row>
+              <!-- <Upcoming-Tasks :arr="sortedArr" :server="server" /> -->
+              <div v-if="serverClicked" class="job-schedules pt-2">
+                <div class="pb-3 pt-2">
+                  <h5>Upcoming Tasks</h5>
                 </div>
-              </b-col>
+                <ul class="timeline">
+                    <li v-for="(task, index) in sortedArr" :key="index">
+                      {{ task }}
+                    <p class="timeline-date">{{ (task.date ? task.date : 'undefined date') }}</p>
+                        <div class="timeline-content">
+                          <h5>{{ task.name }}</h5>
+                            <p>{{ task.command }}</p>
+                        </div>
+                    </li>
+                </ul>
+              </div>
+              <div v-else class="job-schedules pt-2">
+                <div class="pb-3 pt-2">
+                  <h5>Upcoming Tasks</h5>
+                </div>
+                <ul class="timeline">
+                    <li v-for="(task, index) in sortedArr" :key="index">
+                      
+                    <p class="timeline-date">{{ (task.date ? task.date : 'undefined date') }}</p>
+                        <div class="timeline-content">
+                          <h5>{{ task.name }}</h5>
+                            <p>{{ task.command }}</p>
+                        </div>
+                    </li>
+                </ul>
+              </div>
+            </b-row>
           </b-col>
+          <!-- <b-col class="p-0 ml-3 text-white">
+
+          </b-col> -->
         </b-row>
       </b-container>
 
@@ -151,6 +178,7 @@ export default {
         active: false,
         inactive: false
       },
+      serverClicked: false,
       sortedArr: [],
       server: ['94.237.65.245', '94.237.65.245', '94.237.65.245'],
       show: false,
@@ -158,28 +186,28 @@ export default {
       cronstatus: "",
       serverCronStatus: [],
       codeJs: `● cron.service - Regular background program processing daemon
-   Loaded: loaded (/lib/systemd/system/cron.service; enabled; vendor preset: enabled)
-   Active: active (running) since Wed 2022-07-06 14:09:52 PST; 2 weeks 1 days ago
-     Docs: man:cron(8)
- Main PID: 3529 (cron)
-    Tasks: 1 (limit: 4915)
-   CGroup: /system.slice/cron.service
-           └─3529 /usr/sbin/cron -f
+      Loaded: loaded (/lib/systemd/system/cron.service; enabled; vendor preset: enabled)
+      Active: active (running) since Wed 2022-07-06 14:09:52 PST; 2 weeks 1 days ago
+        Docs: man:cron(8)
+      Main PID: 3529 (cron)
+          Tasks: 1 (limit: 4915)
+        CGroup: /system.slice/cron.service
+                └─3529 /usr/sbin/cron -f
 
-    Jul 18 15:55:02 sap-integrations sSMTP[9842]: Authorization failed (535 5.7.8  
-    https://support.google.com/mail/?p=BadCredentials g21-20020aa796b5000000b005289cade5b0sm8528830pfk.124 - gsmtp)
-    Jul 18 15:56:01 sap-integrations sSMTP[9919]: Creating SSL connection to host
-    Jul 18 15:56:01 sap-integrations sSMTP[9919]: SSL connection using ECDHE_RSA_CHACHA20_POLY1305
-    Jul 18 15:56:02 sap-integrations sSMTP[9919]: Authorization failed (535 5.7.8  
-    https://support.google.com/mail/?p=BadCredentials d31-20020a630e1f000000b00411bbcdfbf7sm7405414pgl.87 - gsmtp)
-    Jul 18 15:57:01 sap-integrations sSMTP[10009]: Creating SSL connection to host
-    Jul 18 15:57:01 sap-integrations sSMTP[10009]: SSL connection using ECDHE_RSA_CHACHA20_POLY1305
-    Jul 18 15:57:01 sap-integrations sSMTP[10009]: Authorization failed (535 5.7.8  
-    https://support.google.com/mail/?p=BadCredentials a4-20020aa79704000000b00529cbfc8b38sm8498514pfg.191 - gsmtp)
-    Jul 18 15:58:01 sap-integrations sSMTP[10152]: Creating SSL connection to host
-    Jul 18 15:58:01 sap-integrations sSMTP[10152]: SSL connection using ECDHE_RSA_CHACHA20_POLY1305
-    Jul 18 15:58:02 sap-integrations sSMTP[10152]: Authorization failed (535 5.7.8  
-    https://support.google.`
+          Jul 18 15:55:02 sap-integrations sSMTP[9842]: Authorization failed (535 5.7.8  
+          https://support.google.com/mail/?p=BadCredentials g21-20020aa796b5000000b005289cade5b0sm8528830pfk.124 - gsmtp)
+          Jul 18 15:56:01 sap-integrations sSMTP[9919]: Creating SSL connection to host
+          Jul 18 15:56:01 sap-integrations sSMTP[9919]: SSL connection using ECDHE_RSA_CHACHA20_POLY1305
+          Jul 18 15:56:02 sap-integrations sSMTP[9919]: Authorization failed (535 5.7.8  
+          https://support.google.com/mail/?p=BadCredentials d31-20020a630e1f000000b00411bbcdfbf7sm7405414pgl.87 - gsmtp)
+          Jul 18 15:57:01 sap-integrations sSMTP[10009]: Creating SSL connection to host
+          Jul 18 15:57:01 sap-integrations sSMTP[10009]: SSL connection using ECDHE_RSA_CHACHA20_POLY1305
+          Jul 18 15:57:01 sap-integrations sSMTP[10009]: Authorization failed (535 5.7.8  
+          https://support.google.com/mail/?p=BadCredentials a4-20020aa79704000000b00529cbfc8b38sm8498514pfg.191 - gsmtp)
+          Jul 18 15:58:01 sap-integrations sSMTP[10152]: Creating SSL connection to host
+          Jul 18 15:58:01 sap-integrations sSMTP[10152]: SSL connection using ECDHE_RSA_CHACHA20_POLY1305
+          Jul 18 15:58:02 sap-integrations sSMTP[10152]: Authorization failed (535 5.7.8  
+          https://support.google.`,
     }
   },
   async created(){
@@ -198,13 +226,13 @@ export default {
 
   },
   methods: {
-    async cronReadtStatus(server) {
-      await this.$store.dispatch("Server/cronReadStatus", {
+    async cronReadStatus(server) {
+      let res = await this.$store.dispatch("Server/cronReadStatus", {
         server,
         username: this.user.username,
         privateKey: this.user.private_key,
       })
-
+      return res;
     },
 
     cronToHuman(sched) {
@@ -229,12 +257,23 @@ export default {
       })
       
       this.sortedArr = sched.sort((a,b) => { 
-        console.log((a.date));
         return moment(a.date).diff(moment(b.date))
       });
     },
-    
-    
+
+    sortedArrByServer(server) {
+      console.log("server", server);
+      this.sortedArr.filter(element => {
+        return element.server == server.id
+      })
+    },
+
+    selectServer(server) {
+      // console.log("server: ", server);
+      this.sortedArrByServer(server);
+      this.serverClicked = true;
+    },
+
     showAlert(message, color) {
       this.alert = {
         showAlert: 3,
@@ -245,13 +284,25 @@ export default {
 
   },
   async beforeCreate() {
-    await this.$store.dispatch("Server/fetchListServer").then(res => {
-      this.cronReadtStatus(res.data);
+    let output = [];
+
+    await this.$store.dispatch("Server/fetchListServer").then(async res => {
+      
+      res.data.forEach(async element => {
+        let result = await this.cronReadStatus(element); 
+        this.serverCronStatus.push(result.data[0]);
+      })
+
+
+      let stat = await this.cronReadStatus(res.data[0])
+      // console.log("stat", stat);
     });
 
     await this.$store.dispatch("Jobs/getScheduledTasks").then(res => {
       this.cronToHuman(res.data);
     })
+
+    // console.log("+++++", this.serverCronStatus);
   },
   
 }

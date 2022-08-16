@@ -29,13 +29,14 @@ export default {
             },
             data: data,
         }).then( async res => {
-            console.log(res);
+            console.log("result cronreadstatus: ",res);
             if(Array.isArray(res.data)) {
                 commit("setListServer", res.data);
             } else {
                 commit("setListServer", []);
             }
-            console.log(res)
+            console.log(res);
+            return res;
         })
     }
 }
