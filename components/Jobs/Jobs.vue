@@ -55,10 +55,10 @@
         <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleSubmit">
 
           <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Server" 
-          :state="state.server" label-for="server-input" invalid-feedback="Server is required">
-            <b-form-select id="server-input" size="sm" 
+          :state="state.host" label-for="host-input" invalid-feedback="Server is required">
+            <b-form-select id="host-input" size="sm" 
             :options="(optionServers)"
-            v-model="job.server" required />
+            v-model="job.host" required />
           </b-form-group>
 
           <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
@@ -108,9 +108,9 @@
       <b-modal centered id="update-job" title="Update Job" @hidden="resetCreateJobModal" @ok="updateJob">
         <form class="p-2" ref="createJobForm" @submit.stop.prevent="handleUpdate">
 
-          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
-          :state="state.server" label-for="name-input" invalid-feedback="Name is required">
-            <b-form-select id="server-input" size="sm" v-model="job.server" required />
+          <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Server" 
+          :state="state.host" label-for="name-input" invalid-feedback="Server is required">
+            <b-form-select id="host-input" size="sm" v-model="job.host" :options="optionServers" required />
           </b-form-group>
 
           <b-form-group label-cols="4" label-cols-lg="2" label-size="sm" label="Name" 
@@ -233,6 +233,7 @@ export default {
       ],
       job: {
         id: null,
+        host: null,
         name: null,
         command: null,
         status: null,
@@ -244,6 +245,7 @@ export default {
         message: ""
       },
       state: {
+        host: null,
         name: null,
         command: null,
         status: null,
@@ -274,14 +276,18 @@ export default {
     showCreateJobModal() {
       this.$bvModal.show("create-new-job");
       this.job = {
+        host: null,
         name: null,
         command: null,
         status: null,
         schedule: null,
         created_by: this.user.id,
+        username: this.user.username,
+        private_key: this.user.private_key,
       }
 
       this.state = {
+        host: null,
         name: null,
         command: null,
         status: null,
@@ -317,14 +323,19 @@ export default {
       console.log("data", data);
       this.job = {
         id: data.id,
+        host: data.host,
         name: data.name,
         schedule: data.schedule,
         command: data.command,
         status: data.status,
         modified_by: this.user.id,
+        username: this.user.username,
+        private_key: this.user.private_key,
+        host: data.host,
       }
 
       this.state = {
+        host: null,
         name: null,
         command: null,
         status: null,
@@ -341,14 +352,16 @@ export default {
 
       this.$bvModal.hide("update-job");
       this.show = true;
+      console.log("this.job", this.job);
       await this.$store.dispatch("Jobs/updateJob", this.job).then(async res => {
         
         if(res && res.status == 200) {
-          await this.$store.dispatch("Jobs/fetchListJobs")
+          await this.$store.dispatch("Jobs/fetchListJobs", { username: this.user.username })
           this.job = {}
           this.showAlert("Successfully Updated", "green");
         }
       }).catch((e) => {
+        console.log("AAAAAAAAAAAAA",e);
         this.showAlert(e.response.data.errorMsg, "red");
       })
 

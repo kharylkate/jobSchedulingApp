@@ -76,16 +76,17 @@
                                         <div class="job-info-text">Cron Schedule</div>
                                         <div class="job-info-text">String Schedue</div>
                                         <div class="job-info-text">Server</div>
-                                        <div class="job-info-text">Mail to (if enabled)</div>
+                                        <!-- <div class="job-info-text">Mail to (if enabled)</div> -->
                                         <div class="job-info-text">Date Created</div>
                                     </b-col>
+                                    <!-- {{ job }} -->
                                     <b-col>
                                         <div class="job-info-text">{{ job.name }}</div>
                                         <div class="job-info-text">{{ job.schedule }}</div>
                                         <div class="job-info-text">{{ cronToString("* * * * *") }}</div>
-                                        <div class="job-info-text"> 172.163.10.19 </div>
-                                        <div class="job-info-text"> juihaha.guiapal@biostartuptech.farms.com </div>
-                                        <div class="job-info-text">December 14, 2021 </div>
+                                        <div class="job-info-text">{{ job.host }}</div>
+                                        <!-- <div class="job-info-text"> juihaha.guiapal@biostartuptech.farms.com </div> -->
+                                        <div class="job-info-text">{{ new Date(job.created_at) }}</div>
                                     </b-col>
                                 </b-row>
                             </b-container>
@@ -227,8 +228,9 @@ export default {
         },
     },
     async beforeCreate() {
+        const user = JSON.parse(localStorage.user);
         this.show = true;
-        await this.$store.dispatch("Jobs/fetchListJobs");
+        await this.$store.dispatch("Jobs/fetchListJobs", { username: user.username });
         this.show = false;
     },
 

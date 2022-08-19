@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar vh-100" id="sidebar">
+    <div class="sidebar " id="sidebar">
         <div class="sidebar-header p-2 pt-2 m-2">
           <b-row>
             <div class="sidebar-header-logo">

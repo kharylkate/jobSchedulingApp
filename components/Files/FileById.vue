@@ -200,7 +200,8 @@ export default {
             })
         },
         async getFileById(id) {
-            await this.$store.dispatch("Jobs/fetchFileById", id).then(res => {
+            const user = JSON.parse(localStorage.user);
+            await this.$store.dispatch("Jobs/fetchFileById", { id, username: user.username, private_key: user.private_key}).then(res => {
                 console.log(res);
                 this.file = res;
             })

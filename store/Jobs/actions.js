@@ -19,14 +19,16 @@ export default {
     },
 
     async fetchListJobs({ commit }, data) {
+        console.log("/////////////?????", data);
         return await axios({
             method: "POST",
             url: `${this.$axios.defaults.baseURL}/jobs`,
             headers: {
-                "Content-Type": "application/json, text/plain, */*"
+                "Content-Type": "application/json"
             },
             data: { username: data.username }
         }).then( async res => {
+            console.log("///////////////",res)
             if(res.data.length > 0 && Array.isArray(res.data)) {
                 await commit("setListJobs", res.data);
             } else {
@@ -40,8 +42,9 @@ export default {
         const id = parseInt(data.id);
 
         return await axios({
-            method: "GET",
-            url: `${this.$axios.defaults.baseURL}/jobs/${id}`
+            method: "POST",
+            url: `${this.$axios.defaults.baseURL}/jobs/${id}`,
+            data,
         }).then(async res => {
             if(res && res.data.length && Array.isArray(res.data)) {
                 await commit("setJobById", res.data);
@@ -79,6 +82,7 @@ export default {
     },
 
     async updateJob({ commit }, data) {
+        console.log("~~~", data)
         return await axios({
             method: "PUT",
             url: `${this.$axios.defaults.baseURL}/jobs/${data.id}`,
@@ -91,15 +95,22 @@ export default {
                 schedule: data.schedule,
                 status: data.status,
                 modified_by: data.modified_by,
+                username: data.username,
+                private_key: data.private_key,
+                host: data.host,
             },
         }).then(res => {
+            console.log("res", res);
             if(res) {
                 commit("updateJob", data)
                 return res;
             } else {
                 return res;
             }
-        })        
+        }).catch(e => {
+            console.log("eeee", e);
+            return e
+        })
     },
 
     async runCommand({ commit }, data) {

@@ -7,6 +7,10 @@
     border-radius: 2px;
 }
 
+.job-status {
+    width: 100% !important;
+}
+
 .script-textarea:disabled {
     background-color: #1c8a74;
     font-size: 13px;
@@ -14,10 +18,11 @@
     width: 100%;
 }
 
-pre code.hljs {
+pre .code.hljs {
     overflow-x: hidden !important;
     overflow-y: scroll !important;
     height: 100%;
+    width: 100%;
     overflow-wrap: break-word !important;
 }
 
@@ -35,3 +40,28 @@ pre code.hljs {
     border-radius: 2px;
 }
 
+.server-card-active {
+    background-color: #1c8a74;
+    border-radius: 2px;
+    border-width: 0px;
+}
+
+.job-info-dashboard {
+    height: 90;
+    // overflow-y: auto;
+}
+
+
+html, body, .main-content, .content, .sidebar {
+    height: 100vh !important;
+}
+
+.server-div {
+    height: 100vh !important;
+    overflow-y: auto;
+}
+
+.server-card {
+    min-height: fit-content;
+    overflow-y: auto;
+}

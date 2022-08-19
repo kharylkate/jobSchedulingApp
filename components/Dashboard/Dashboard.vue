@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="main-content p-0 m-0 vh-100">
+    <div class="main-content p-0 m-0">
       <div class="header">
         <Navbar />
         <div class="header-page-title m-0 pt-2 pb-1 pr-0 pl-0">
@@ -9,7 +9,7 @@
       </div>
 
       <b-container fluid class="p-0 m-0 ">
-        <b-row class="m-0 p-0 vh-100">
+        <b-row class="m-0 p-0">
           <b-col cols="3" class="text-white server-div p-1 mr-3">
             <h4 class="pl-2 pt-2">Servers</h4>
             <h6 class="pl-2 pt-0 mt-0" style="font-weight: 300">Show servers with cron jobs</h6>
@@ -26,41 +26,32 @@
               </b-button>
             </div>
 
-            <b-card class="m-1 p-2 mb-2 server-card" v-for="(server, id) in serverCronStatus" :key="id" bg-variant="dark" text-variant="white" @click="selectServer(server)">
-              <b-card-text>
+            <b-card class="m-1 mb-2 server-card" v-for="(srvr, id) in serverCronStatus" :key="id" bg-variant="dark" text-variant="white" 
+            @click="selectServer(srvr)">
+              <b-card-text :class="( (serverClicked) && (server == srvr) ? 'server-card-active m-0 p-2 ' : 'm-0 p-2 ' )">
                 <h6 class="d-flex justify-content-between align-items-center">
-                  {{ server.name}}
+                  {{ srvr.name}}
                   <unicon class="unicon" name="check-circle" fill="#1c8a74" />
                 </h6>
 
-                <h6> {{ server.host }} </h6>
-                <!-- {{ server.status.stdout }} -->
+                <h6> {{ srvr.host }} </h6>
+                  <p class="m-0">{{ srvr.status.stdout[4] }}<br> {{ srvr.status.stdout[5] }}</p>
+                  <p class="m-0 p-0">{{ srvr.status.stdout[2] }}</p>
 
-                <!-- <div class="m-0 p-0" v-for="(el, id) in server.status" :key="id"> -->
-                  <!-- <p class="m-0">Main PID: 3159 (cron) <br> Tasks: 1 (limit: 4195)</p> -->
-                  <p class="m-0">{{ server.status.stdout[4] }}<br> {{ server.status.stdout[5] }}</p>
-                  <p class="m-0 p-0">{{ server.status.stdout[2] }}</p>
-                  <!-- <p class="m-0 p-0">Running since Wed 2022-07-08 14:09:52 PST</p> -->
-                <!-- </div> -->
               </b-card-text>
               
             </b-card>
               
             
           </b-col>
-          <b-col class="job-row-info text-white">
-            <b-row>
-              
-            </b-row>
-            <b-row>
-              <!-- <Upcoming-Tasks :arr="sortedArr" :server="server" /> -->
-              <div v-if="serverClicked" class="job-schedules pt-2">
+          <b-col cols="auto" class="job-row-info text-white">
+            <b-row class="job-info-dashboard">             
+              <div v-if="!serverClicked" class="job-schedules pt-2">
                 <div class="pb-3 pt-2">
                   <h5>Upcoming Tasks</h5>
                 </div>
                 <ul class="timeline">
                     <li v-for="(task, index) in sortedArr" :key="index">
-                      {{ task }}
                     <p class="timeline-date">{{ (task.date ? task.date : 'undefined date') }}</p>
                         <div class="timeline-content">
                           <h5>{{ task.name }}</h5>
@@ -69,77 +60,13 @@
                     </li>
                 </ul>
               </div>
-              <div v-else class="job-schedules pt-2">
-                <div class="pb-3 pt-2">
-                  <h5>Upcoming Tasks</h5>
-                </div>
-                <ul class="timeline">
-                    <li v-for="(task, index) in sortedArr" :key="index">
-                      
-                    <p class="timeline-date">{{ (task.date ? task.date : 'undefined date') }}</p>
-                        <div class="timeline-content">
-                          <h5>{{ task.name }}</h5>
-                            <p>{{ task.command }}</p>
-                        </div>
-                    </li>
-                </ul>
-              </div>
+              <Upcoming-Tasks v-else :arr="sortedArr" :server="server" />
             </b-row>
           </b-col>
-          <!-- <b-col class="p-0 ml-3 text-white">
-
-          </b-col> -->
         </b-row>
       </b-container>
 
-      <!-- <b-container fluid class="p-5">
-        <b-row>
-          <b-col xl="5">
-            <b-row class="jobs-counter mb-5 p-4" style="padding-left: 10px; margin-left:20px;">
-              <div class="">
-                OH YES
-              </div>
-            </b-row>
-            <b-row class="jobs-running mt-5 p-4" style="margin-left:20px;">
-              <div class="">
-                <ul>
-                  <li>YES</li>
-                  <li>YES</li>
-                  <li>YES</li>
-                </ul>
-              </div>
-            </b-row>
-          </b-col>
-
-          <b-col xl="7">
-            <b-col class="jobs-status mb-5 p-4" style="padding-left: 10px; margin-left:20px;">
-              <div class="job-status-command">
-                <p class="text-white"> systemctl status cron </p>
-              </div>
-              <div>
-                <highlightjs :code="codeJs" />
-              </div>
-            </b-col>
-            <b-row class="jobs-scheduled mt-5 p-4"  style="padding-left: 10px; margin-left:20px;">
-              <div class="">
-                <ul>
-                  <li>YES</li>
-                  <li>YES</li>
-                  <li>YES</li>
-                </ul>
-              </div>
-            </b-row>
-          </b-col>
-        </b-row>
-      </b-container> -->
-
-        <!-- <div class="jobs-table">
-          <div class="jobs-table-top">
-            <b-row>
-              
-            </b-row>
-          </div>
-        </div> -->
+  
 
       <!-- alert -->
       <div>
@@ -180,7 +107,7 @@ export default {
       },
       serverClicked: false,
       sortedArr: [],
-      server: ['94.237.65.245', '94.237.65.245', '94.237.65.245'],
+      server: {}, //['94.237.65.245', '94.237.65.245', '94.237.65.245'],
       show: false,
       user: JSON.parse(localStorage.user),
       cronstatus: "",
@@ -269,7 +196,8 @@ export default {
     },
 
     selectServer(server) {
-      // console.log("server: ", server);
+      console.log("server: ", server);
+      this.server = server;
       this.sortedArrByServer(server);
       this.serverClicked = true;
     },
